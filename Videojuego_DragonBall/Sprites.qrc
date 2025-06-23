@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>goku.png</file>
+        <file>tao_pai-pai-v.jpg</file>
+    </qresource>
+</RCC>
