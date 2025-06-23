@@ -15,6 +15,8 @@ public:
     void generarEnemigos();
     void detectarImpactos();
     void ajustarDireccion();
+    void iniciarnivel() override;
+
 };
 
 #endif // NIVEL3_H

@@ -1,18 +1,23 @@
 #include "personaje.h"
-#include <QKeyEvent>
+#include <QGraphicsView>
 
-Personaje::Personaje(QObject* parent) : QObject(parent) {
+Personaje::Personaje(QGraphicsView* vista, QObject* parent)
+    : QObject(parent), posX(200), posY(200), velocidad(5) {
     spriteX = 0;
     spriteY = 0;
     spriteAncho = 60;
     spriteAlto = 60;
-    vida = 3;
+    vida = 5;
+
+    if (vista)
+        limites = vista->size();
 
     setFlag(QGraphicsItem::ItemIsFocusable);
     hojaSprites.load(":/sprites.png");
     sprite = hojaSprites.copy(spriteX, spriteY, spriteAncho, spriteAlto);
     setPixmap(sprite);
-    setPos(200, 200);
+    setPos(posX, posY);
+    setFocus();
 }
 
 void Personaje::recibirDanio(int cantidad) {
@@ -20,7 +25,7 @@ void Personaje::recibirDanio(int cantidad) {
 }
 
 void Personaje::mover() {
-    // logica base de movimiento
+    // logica de movimiento
 }
 
 void Personaje::saltar() {
@@ -37,17 +42,22 @@ void Personaje::esquivar() {
 
 void Personaje::keyPressEvent(QKeyEvent* event) {
     switch (event->key()) {
-    case Qt::Key_A:
-        setX(x() - 5);
+    case Qt::Key_A: // izquierda
+        if (posX - velocidad >= 0)
+            posX -= velocidad;
         break;
-    case Qt::Key_D:
-        setX(x() + 5);
+    case Qt::Key_D: // derecha
+        if (posX + spriteAncho + velocidad <= limites.width())
+            posX += velocidad;
         break;
-    case Qt::Key_W:
-        setY(y() - 5);
+    case Qt::Key_W: // arriba
+        if (posY - velocidad >= 0)
+            posY -= velocidad;
         break;
-    case Qt::Key_S:
-        setY(y() + 5);
+    case Qt::Key_S: // abajo
+        if (posY + spriteAlto + velocidad <= limites.height())
+            posY += velocidad;
         break;
     }
+    setPos(posX, posY);
 }

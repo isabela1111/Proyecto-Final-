@@ -5,11 +5,13 @@
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 #include <QKeyEvent>
+#include <QSize>
+#include <QGraphicsView>
 
 class Personaje : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 public:
-    explicit Personaje(QObject* parent = nullptr);
+    explicit Personaje(QGraphicsView* vista = nullptr, QObject* parent = nullptr);
 
     QString nombre;
     int vida;
@@ -19,9 +21,9 @@ public:
     int spriteY;
     int spriteAncho;
     int spriteAlto;
+
     float posX;
     float posY;
-
 
     QPixmap hojaSprites;
     QPixmap sprite;
@@ -34,6 +36,7 @@ public:
 
 protected:
     void keyPressEvent(QKeyEvent* event) override;
+    QSize limites;
 };
 
 #endif // PERSONAJE_H

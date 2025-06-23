@@ -28,7 +28,7 @@ void Goku::usarNube() {
 
 void Goku::devolverGranada() {
     modoAtaque = true;
-    qDebug() << "Goku está intentando devolver la granada.";
+    qDebug() << "Goku esta intentando devolver la granada.";
 
 
 }
