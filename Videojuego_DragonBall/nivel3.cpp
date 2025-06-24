@@ -27,3 +27,7 @@ void Nivel3::generarEnemigos() {
 void Nivel3::detectarImpactos() {
     // Logica de colisiones
 }
+void Nivel3::iniciarnivel() {
+    qDebug() << "Nivel 3 iniciado (nube voladora hacia la base)";
+}
+

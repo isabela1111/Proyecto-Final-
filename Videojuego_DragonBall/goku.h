@@ -6,7 +6,7 @@
 class Goku : public Personaje {
     Q_OBJECT
 public:
-    explicit Goku(QObject* parent = nullptr);
+    explicit Goku(QGraphicsView* vista = nullptr, QObject* parent = nullptr);
 
     bool tieneNubeVoladora;
     bool modoAtaque;

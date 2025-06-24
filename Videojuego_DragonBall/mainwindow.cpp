@@ -1,8 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "nivel1.h"
-#include "nivel2.h"
-#include "nivel3.h"
+#include <QGraphicsProxyWidget>
+#include <QPushButton>
+#include <QImage>
+#include <QFont>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -11,48 +12,54 @@ MainWindow::MainWindow(QWidget *parent)
     this->resize(800, 700);
 
     escena = new QGraphicsScene(this);
-    ui->graphicsView->setScene(escena);
+    ui->graphicsView_->setScene(escena);
 
-    QImage fondoMenu(":/Recursos/FondoMenu.png");
-    escena->setSceneRect(0, 0, fondoMenu.width(), fondoMenu.height());
-    ui->graphicsView->setBackgroundBrush(QBrush(fondoMenu));
+    QImage fondoOriginal(":/FondoMenu.jpg");
+    QImage fondoEscalado = fondoOriginal.scaled(
+        ui->graphicsView_->width(),
+        ui->graphicsView_->height(),
+        Qt::IgnoreAspectRatio,
+        Qt::SmoothTransformation
+        );
 
-    titulo = escena->addText("Dragon Ball");      // Título del juego
-    titulo->setDefaultTextColor(Qt::white);
-    titulo->setFont(QFont("Arial", 18, QFont::Bold));
-    titulo->setPos(180, 30);
+    escena->setSceneRect(0, 0, ui->graphicsView_->width(), ui->graphicsView_->height());
+    ui->graphicsView_->setBackgroundBrush(QBrush(fondoEscalado));
 
+    QString textoTitulo = "Dragon Ball";
+    QFont fuenteTitulo("Impact", 80, QFont::Bold);
+    titulo = escena->addText(textoTitulo);
+    titulo->setFont(fuenteTitulo);
+    titulo->setDefaultTextColor(QColor("#0a2c6b"));
+
+
+    // Centrado horizontal
+    QRectF rectTitulo = titulo->boundingRect();
+    float xCentro = (escena->width() - rectTitulo.width()) / 2;
+    titulo->setPos(xCentro, 18);
+
+    int botonAncho = 300;
+    int botonAlto = 60;
+    int espacio = 60;
+    int xBoton = (escena->width() - botonAncho) / 2;
+    int yInicio = 300;
 
     botonNivel1 = new QPushButton("Nivel 1: Torre Karin");
-    botonNivel1->setFixedSize(300, 40);
-    escena->addWidget(botonNivel1)->setPos(250, 100);
+    botonNivel1->setFixedSize(botonAncho, botonAlto);
+    botonNivel1->setStyleSheet("background-color: black; color: white; border-radius: 10px;");
+    escena->addWidget(botonNivel1)->setPos(xBoton, yInicio);
     connect(botonNivel1, &QPushButton::clicked, this, &MainWindow::iniciarNivel1);
 
-    descripcion1 = escena->addText("Simulacion de gravedad y obstaculos que\nralentizan el ascenso. Mantente en movimiento.");
-    descripcion1->setDefaultTextColor(Qt::white);
-    descripcion1->setFont(QFont("Arial", 10));
-    descripcion1->setPos(200, 150);
-
     botonNivel2 = new QPushButton("Nivel 2: Goku vs Tao Pai Pai");
-    botonNivel2->setFixedSize(300, 40);
-    escena->addWidget(botonNivel2)->setPos(250, 220);
+    botonNivel2->setFixedSize(botonAncho, botonAlto);
+    botonNivel2->setStyleSheet("background-color: black; color: white; border-radius: 10px;");
+    escena->addWidget(botonNivel2)->setPos(xBoton, yInicio + botonAlto + espacio);
     connect(botonNivel2, &QPushButton::clicked, this, &MainWindow::iniciarNivel2);
 
-    descripcion2 = escena->addText("Combate tactico.");
-    descripcion2->setDefaultTextColor(Qt::white);
-    descripcion2->setFont(QFont("Arial", 10));
-    descripcion2->setPos(200, 270);
-
-
     botonNivel3 = new QPushButton("Nivel 3: Vuelo hacia la base");
-    botonNivel3->setFixedSize(300, 40);
-    escena->addWidget(botonNivel3)->setPos(250, 340);
+    botonNivel3->setFixedSize(botonAncho, botonAlto);
+    botonNivel3->setStyleSheet("background-color: black; color: white; border-radius: 10px;");
+    escena->addWidget(botonNivel3)->setPos(xBoton, yInicio + 2 * (botonAlto + espacio));
     connect(botonNivel3, &QPushButton::clicked, this, &MainWindow::iniciarNivel3);
-
-    descripcion3 = escena->addText("Esquiva aviones\nenemigos. ");
-    descripcion3->setDefaultTextColor(Qt::white);
-    descripcion3->setFont(QFont("Arial", 10));
-    descripcion3->setPos(200, 390);
 }
 
 MainWindow::~MainWindow() {
@@ -60,16 +67,13 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::iniciarNivel1() {
-    escena->clear();
-    Nivel1* nivel = new Nivel1(this);
+    // Aquí irá la logica para cargar Nivel 1
 }
 
 void MainWindow::iniciarNivel2() {
-    escena->clear();
-    Nivel2* nivel = new Nivel2(this);
+    // Aquí irá la logica para cargar Nivel 2
 }
 
 void MainWindow::iniciarNivel3() {
-    escena->clear();
-    Nivel3* nivel = new Nivel3(this);
+    // Aquí irá la logica para cargar Nivel 3
 }

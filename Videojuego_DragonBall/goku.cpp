@@ -1,8 +1,9 @@
 #include "goku.h"
-#include <QTimer>
 #include <QDebug>
 
-Goku::Goku(QObject* parent) : Personaje(parent) {
+Goku::Goku(QGraphicsView* vista, QObject* parent)
+    : Personaje(vista, parent)
+{
     spriteX = 0;
     spriteY = 0;
     spriteAncho = 60;
@@ -22,13 +23,9 @@ Goku::Goku(QObject* parent) : Personaje(parent) {
 void Goku::usarNube() {
     tieneNubeVoladora = true;
     qDebug() << "Goku ha activado la nube voladora.";
-
 }
-
 
 void Goku::devolverGranada() {
     modoAtaque = true;
-    qDebug() << "Goku esta intentando devolver la granada.";
-
-
+    qDebug() << "Goku está intentando devolver la granada.";
 }

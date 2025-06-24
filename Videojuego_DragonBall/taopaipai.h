@@ -6,7 +6,7 @@
 class TaoPaiPai : public Personaje {
     Q_OBJECT
 public:
-    explicit TaoPaiPai(QObject* parent = nullptr);
+    explicit TaoPaiPai(QGraphicsView* vista = nullptr, QObject* parent = nullptr);  // ✅ Igual que en Goku
 
     bool tieneGranada;
     bool subiendoTorre;
@@ -16,7 +16,6 @@ public:
     void caer();
     void lanzarGranada();
     void ataqueAutomatico();
-
 };
 
 #endif // TAOPAIPAI_H

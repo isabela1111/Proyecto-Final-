@@ -1,8 +1,10 @@
 #include "taopaipai.h"
 #include <QTimer>
-#include <QGraphicsScene>
+#include <QDebug>
 
-TaoPaiPai::TaoPaiPai(QObject* parent) : Personaje(parent) {
+TaoPaiPai::TaoPaiPai(QGraphicsView* vista, QObject* parent)
+    : Personaje(vista, parent)
+{
     nombre = "Tao Pai Pai";
     vida = 5;
     velocidad = 5;
@@ -27,18 +29,9 @@ TaoPaiPai::TaoPaiPai(QObject* parent) : Personaje(parent) {
 
     QTimer* ataqueTimer = new QTimer(this);
     connect(ataqueTimer, &QTimer::timeout, this, &TaoPaiPai::ataqueAutomatico);
-    ataqueTimer->start(3000); // ataca cada 3 segundos
+    ataqueTimer->start(3000);
 }
 
-void TaoPaiPai::subirTorre() {
-    if (subiendoTorre) {
-        setY(y() - velocidad);  // Se mueve hacia arriba
-        if (y() <= 50) { // Límite superior ficticio
-            subiendoTorre = false;
-            caer();
-        }
-    }
-}
 
 void TaoPaiPai::caer() {
     setY(y() + 200);
