@@ -1,3 +1,4 @@
+#include "juego.h"
 #include "mainwindow.h"
 
 #include "ui_mainwindow.h"
@@ -5,6 +6,10 @@
 #include <QPushButton>
 #include <QImage>
 #include <QFont>
+
+
+Juego* juegoGlobal = nullptr;
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -68,6 +73,7 @@ MainWindow::~MainWindow() {
 
 
 void MainWindow::iniciarNivel1() {
+
     QGraphicsView* vista = new QGraphicsView();
     Nivel1* nivel1 = new Nivel1(vista);
     nivel1->iniciarnivel();
