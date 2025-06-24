@@ -17,7 +17,9 @@ SOURCES += \
     nivel1.cpp \
     nivel2.cpp \
     nivel3.cpp \
+    obstaculo.cpp \
     personaje.cpp \
+    recursos.cpp \
     taopaipai.cpp
 
 HEADERS += \
@@ -28,8 +30,10 @@ HEADERS += \
     nivel1.h \
     nivel2.h \
     nivel3.h \
+    obstaculo.h \
     personaje.h \
-    taopaipai.h
+    recursos.h \
+    taopaipai.h\
 
 FORMS += \
     mainwindow.ui

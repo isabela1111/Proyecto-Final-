@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+
 #include "ui_mainwindow.h"
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
@@ -14,7 +15,8 @@ MainWindow::MainWindow(QWidget *parent)
     escena = new QGraphicsScene(this);
     ui->graphicsView_->setScene(escena);
 
-    QImage fondoOriginal(":/FondoMenu.jpg");
+
+    QImage fondoOriginal(Recursos::fondoMenu);
     QImage fondoEscalado = fondoOriginal.scaled(
         ui->graphicsView_->width(),
         ui->graphicsView_->height(),
@@ -31,8 +33,6 @@ MainWindow::MainWindow(QWidget *parent)
     titulo->setFont(fuenteTitulo);
     titulo->setDefaultTextColor(QColor("#0a2c6b"));
 
-
-    // Centrado horizontal
     QRectF rectTitulo = titulo->boundingRect();
     float xCentro = (escena->width() - rectTitulo.width()) / 2;
     titulo->setPos(xCentro, 18);
@@ -66,14 +66,22 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+
 void MainWindow::iniciarNivel1() {
-    // Aquí irá la logica para cargar Nivel 1
+    QGraphicsView* vista = new QGraphicsView();
+    Nivel1* nivel1 = new Nivel1(vista);
+    nivel1->iniciarnivel();
+
+    vista->setScene(nivel1->escena);
+    vista->setFixedSize(800, 600);
+    vista->show();
 }
 
+
 void MainWindow::iniciarNivel2() {
-    // Aquí irá la logica para cargar Nivel 2
+    // Aqui ira la logica para cargar Nivel 2
 }
 
 void MainWindow::iniciarNivel3() {
-    // Aquí irá la logica para cargar Nivel 3
+    // Aqui ira la logica para cargar Nivel 3
 }

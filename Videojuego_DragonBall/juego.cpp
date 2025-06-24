@@ -28,7 +28,8 @@ Juego::Juego(QObject* parent) : QObject(parent) {
 
 void Juego::iniciarJuego() {
     enEjecucion = true;
-    cambiarNivel(new Nivel1());
+    cambiarNivel(new Nivel1(view));
+
 }
 
 void Juego::cambiarNivel(Nivel* n) {

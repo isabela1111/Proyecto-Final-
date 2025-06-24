@@ -16,6 +16,7 @@ public:
     bool terminado;
     QList<Personaje*> personajes;
     QGraphicsScene* escena;
+    QGraphicsView* vista;
 
     virtual void iniciarnivel();
     virtual void actualizar();
