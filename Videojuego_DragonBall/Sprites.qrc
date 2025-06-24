@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>goku.png</file>
+        <file>tao_pai-pai-v.jpg</file>
+        <file>fondo_nivel1.PNG</file>
+        <file>fondo_nivel2.PNG</file>
+        <file>fondo_nivel3.png</file>
+        <file>FondoMenu.jpg</file>
+    </qresource>
+</RCC>
