@@ -1,9 +1,14 @@
+#include "juego.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
 #include <QImage>
 #include <QFont>
+
+
+Juego* juegoGlobal = nullptr;
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -67,7 +72,9 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::iniciarNivel1() {
-    // Aquí irá la logica para cargar Nivel 1
+    if (!juegoGlobal)
+        juegoGlobal = new Juego();
+    juegoGlobal->iniciarJuego();
 }
 
 void MainWindow::iniciarNivel2() {
