@@ -5,8 +5,7 @@
 #include <QTimer>
 #include <QPixmap>
 
-class Piedra : public Obstaculo
-{
+class Piedra : public Obstaculo{
 public:
     Piedra(Nivel1* nivel, QGraphicsItem* parent = nullptr);
 

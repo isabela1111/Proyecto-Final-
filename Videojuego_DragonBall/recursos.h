@@ -24,9 +24,7 @@ public:
     static const QString TaoJumpSprite;
     static const QString TaoCaidoSprite;
     static const QString RocaSprite;
-
-
-
+    static const QString granadaSprite;
 
 };
 

@@ -4,15 +4,15 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 
-class Nivel1;  // Para poder acceder a nivel
+class Nivel1;
 
 class Obstaculo : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
     Obstaculo(Nivel1* nivel, QGraphicsItem* parent = nullptr);
-    virtual void mover();  // Movimiento base
-    virtual void verificarColision();  // Para sobreescribir si quieres otros efectos
+    virtual void mover();
+    virtual void verificarColision();
 
 protected:
     Nivel1* nivel;

@@ -17,6 +17,8 @@ const QString Recursos::TaoRunSprite = ":/Recursos/Sprites/Taorun.PNG";
 const QString Recursos::TaoJumpSprite = ":/Recursos/Sprites/Taojump.PNG";
 const QString Recursos::TaoCaidoSprite = ":/Recursos/Sprites/Taocaido.PNG";
 const QString Recursos::RocaSprite =  ":/Recursos/Sprites/roca.png";
+const QString Recursos::granadaSprite = ":/Recursos/Sprites/granada.png";
+
 
 
 
