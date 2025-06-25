@@ -12,10 +12,14 @@ class Nivel1 : public Nivel {
 public:
     explicit Nivel1(QGraphicsView* vista, QObject* parent = nullptr);
 
+    bool gameOverShown;
+    bool juegoIniciado;
     void iniciarnivel() override;
     void generarObstaculos();
     void verificarCaida();
     void aplicarGravedad();
+    void quitarVida();
+    void comenzarJuego();
 
 private slots:
     void actualizarCronometro();
@@ -23,26 +27,23 @@ private slots:
 private:
     float alturaActual;
     float alturaMeta;
+    int vidasTotales;
+    int vidasRestantes;
+    int tiempoRestante;
 
     TaoPaiPai* taoPaiPai;
     QGraphicsView* vista;
-
     QList<QGraphicsRectItem*> barrasVida;
-    int vidasTotales;
-    int vidasRestantes;
-
-    int tiempoRestante;
     QGraphicsTextItem* textoCronometro;
 
-    bool gameOverShown;
-    bool juegoIniciado;
-
+    QTimer* temporizador;
+    QTimer* timerCronometro;
+    QTimer* timerPiedras;
 
     void crearBarrasVida();
     void actualizarBarraVida();
     void mostrarPantallaGameOver();
     void mostrarPantallaVictoria();
-    void comenzarJuego();
 };
 
 #endif // NIVEL1_H

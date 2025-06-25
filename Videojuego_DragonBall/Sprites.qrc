@@ -13,5 +13,6 @@
         <file>Recursos/fondos/fondoGameOverGoku.jpg</file>
         <file>Recursos/fondos/fondoWinGoku.jpg</file>
         <file>Recursos/fondos/fondoWinTao.jpg</file>
+        <file>Recursos/Sprites/roca.png</file>
     </qresource>
 </RCC>

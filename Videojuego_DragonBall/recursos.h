@@ -23,6 +23,8 @@ public:
     static const QString TaoRunSprite;
     static const QString TaoJumpSprite;
     static const QString TaoCaidoSprite;
+    static const QString RocaSprite;
+
 
 
 
