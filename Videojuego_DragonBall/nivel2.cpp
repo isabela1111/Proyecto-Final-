@@ -10,7 +10,8 @@ Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
     escena->addItem(fondoItem);
 
     goku = new Goku();
-    taoPaiPai = new TaoPaiPai();
+    taoPaiPai = new TaoPaiPai(vista, this);
+
 
     goku->setPos(100, 400);
     taoPaiPai->setPos(600, 400);
@@ -28,6 +29,5 @@ Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
 
 void Nivel2::gestionarAtaques() {
     // Tao Pai Pai lanza granada de forma parabolica
-    taoPaiPai->lanzarGranada();
 
 }

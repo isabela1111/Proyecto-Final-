@@ -1,10 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
 #include <QPushButton>
+#include "nivel1.h"
+#include "juego.h"
+#include "recursos.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -25,9 +27,8 @@ private:
     QPushButton* botonNivel1;
     QPushButton* botonNivel2;
     QPushButton* botonNivel3;
-    QGraphicsTextItem* descripcion1;
-    QGraphicsTextItem* descripcion2;
-    QGraphicsTextItem* descripcion3;
+
+    Nivel1* nivel1;
 
 private slots:
     void iniciarNivel1();

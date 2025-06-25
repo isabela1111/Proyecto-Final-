@@ -2,20 +2,43 @@
 #define TAOPAIPAI_H
 
 #include "personaje.h"
+#include <QTimer>
+#include <QPixmap>
 
 class TaoPaiPai : public Personaje {
     Q_OBJECT
 public:
-    explicit TaoPaiPai(QGraphicsView* vista = nullptr, QObject* parent = nullptr);  // ✅ Igual que en Goku
+    explicit TaoPaiPai(QGraphicsView* vista, QObject* parent = nullptr);
 
-    bool tieneGranada;
-    bool subiendoTorre;
-    bool modoAtaque;
+    void mover() override;
+    void saltar() override;
 
-    void subirTorre();
-    void caer();
-    void lanzarGranada();
-    void ataqueAutomatico();
+private slots:
+    void animarCaminar();
+    void animarSalto();
+    void actualizarFisica();
+
+private:
+    void actualizarFrame();
+    void mostrarCaida();
+
+    QTimer* timerCaminar;
+    QTimer* timerSaltar;
+    QTimer* timerFisica;
+
+    QPixmap hojaSprites;
+    QPixmap sprite;
+
+    int frameActual;
+    int filaMaxima;
+    int spriteAncho;
+    int spriteAlto;
+
+    float velocidadY;
+    float gravedad;
+
+    bool enElAire;
+    bool estaMoviendose;
 };
 
 #endif // TAOPAIPAI_H

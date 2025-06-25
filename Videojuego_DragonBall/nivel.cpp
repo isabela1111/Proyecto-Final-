@@ -1,10 +1,15 @@
 #include "nivel.h"
+#include <QGraphicsView>
 
-Nivel::Nivel(QObject* parent) : QObject(parent) {
+Nivel::Nivel(QObject* parent)
+    : QObject(parent)
+{
     escena = new QGraphicsScene();
-    fondo = QPixmap();
-    terminado = false;
+    vista = new QGraphicsView(escena);
+    vista->setFixedSize(800, 600);
+    vista->show();
 }
+
 
 void Nivel::iniciarnivel() {
 
