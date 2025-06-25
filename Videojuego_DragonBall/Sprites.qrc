@@ -9,5 +9,9 @@
         <file>Recursos/Sprites/Taorun.PNG</file>
         <file>Recursos/Sprites/Taocaido.PNG</file>
         <file>Recursos/Sprites/Taojump.PNG</file>
+        <file>Recursos/fondos/fondoGameOverTao.jpg</file>
+        <file>Recursos/fondos/fondoGameOverGoku.jpg</file>
+        <file>Recursos/fondos/fondoWinGoku.jpg</file>
+        <file>Recursos/fondos/fondoWinTao.jpg</file>
     </qresource>
 </RCC>

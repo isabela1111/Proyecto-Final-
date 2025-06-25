@@ -73,9 +73,8 @@ MainWindow::~MainWindow() {
 
 
 void MainWindow::iniciarNivel1() {
-
     QGraphicsView* vista = new QGraphicsView();
-    Nivel1* nivel1 = new Nivel1(vista);
+    nivel1 = new Nivel1(vista);
     nivel1->iniciarnivel();
 
     vista->setScene(nivel1->escena);

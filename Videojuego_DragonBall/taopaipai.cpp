@@ -3,7 +3,8 @@
 #include <QDebug>
 
 TaoPaiPai::TaoPaiPai(QGraphicsView* vista, QObject* parent)
-    : Personaje(vista, parent), frameActual(0), filaMaxima(5)  // 5 frames verticales
+    : Personaje(vista, parent), frameActual(0), filaMaxima(5),
+    velocidadY(0), gravedad(0.7), enElAire(false), estaMoviendose(false)
 {
     nombre = "Tao Pai Pai";
     vida = 5;
@@ -22,11 +23,16 @@ TaoPaiPai::TaoPaiPai(QGraphicsView* vista, QObject* parent)
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
 
+    // Animaciones
     timerCaminar = new QTimer(this);
     connect(timerCaminar, &QTimer::timeout, this, &TaoPaiPai::animarCaminar);
 
     timerSaltar = new QTimer(this);
     connect(timerSaltar, &QTimer::timeout, this, &TaoPaiPai::animarSalto);
+
+    timerFisica = new QTimer(this);
+    connect(timerFisica, &QTimer::timeout, this, &TaoPaiPai::actualizarFisica);
+    timerFisica->start(30);  // 30 ms para física
 }
 
 void TaoPaiPai::actualizarFrame() {
@@ -36,43 +42,69 @@ void TaoPaiPai::actualizarFrame() {
 }
 
 void TaoPaiPai::mover() {
-    frameActual = 0;
+    estaMoviendose = true;
+    velocidadY = -5;  // Subir
     hojaSprites.load(Recursos::TaoRunSprite);
     hojaSprites.setMask(hojaSprites.createMaskFromColor(QColor(128, 0, 128), Qt::MaskInColor));
+    frameActual = 0;
     timerCaminar->start(100);
+}
+
+void TaoPaiPai::saltar() {
+    estaMoviendose = true;
+    velocidadY = -10;
+    hojaSprites.load(Recursos::TaoJumpSprite);
+    hojaSprites.setMask(hojaSprites.createMaskFromColor(QColor(128, 0, 128), Qt::MaskInColor));
+    frameActual = 0;
+    timerSaltar->start(100);
 }
 
 void TaoPaiPai::animarCaminar() {
     if (frameActual >= filaMaxima) {
         frameActual = 0;
         timerCaminar->stop();
+        estaMoviendose = false;
         return;
     }
 
     actualizarFrame();
-    moveBy(0, -velocidad);  // Subir
-
     frameActual++;
-}
-
-void TaoPaiPai::saltar() {
-    frameActual = 0;
-    hojaSprites.load(Recursos::TaoJumpSprite);
-    hojaSprites.setMask(hojaSprites.createMaskFromColor(QColor(128, 0, 128), Qt::MaskInColor));
-    timerSaltar->start(100);
 }
 
 void TaoPaiPai::animarSalto() {
     if (frameActual >= filaMaxima) {
         frameActual = 0;
         timerSaltar->stop();
-        mover();  // Al finalizar salto, retoma la animación de subir
+        estaMoviendose = false;
+        mover();
         return;
     }
-
     actualizarFrame();
-    moveBy(0, -10);  // Subida más fuerte
-
     frameActual++;
 }
 
+void TaoPaiPai::actualizarFisica() {
+    if (!estaMoviendose) {
+        velocidadY += gravedad;
+    }
+    moveBy(0, velocidadY);  // SOLO movimiento vertical
+    if (y() + boundingRect().height() > 600) {
+        mostrarCaida();
+    }
+    // Si llega muy arriba, reinicia abajo
+    if (y() < 50) {
+        setY(500);
+    }
+    // Fijamos la X constantemente por si se corrió
+    setX(250);
+}
+
+void TaoPaiPai::mostrarCaida() {
+    hojaSprites.load(Recursos::TaoCaidoSprite);
+    hojaSprites.setMask(hojaSprites.createMaskFromColor(QColor(128, 0, 128), Qt::MaskInColor));
+    sprite = hojaSprites.copy(0, 0, spriteAncho, spriteAlto);
+    setPixmap(sprite);
+    velocidadY = 0;
+    setY(500);  // reinicia desde abajo
+    estaMoviendose = false;
+}

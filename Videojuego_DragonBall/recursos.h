@@ -12,6 +12,10 @@ public:
     static const QString fondoNivel1;
     static const QString fondoNivel2;
     static const QString fondoNivel3;
+    static const QString fondoGameOverTao;
+    static const QString fondoGameOverGoku;
+    static const QString fondoWinTao;
+    static const QString fondoWinGoku;
 
     // Sprites
 
@@ -19,6 +23,7 @@ public:
     static const QString TaoRunSprite;
     static const QString TaoJumpSprite;
     static const QString TaoCaidoSprite;
+
 
 
 };

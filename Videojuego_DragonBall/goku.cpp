@@ -1,4 +1,5 @@
 #include "goku.h"
+#include "recursos.h"
 #include <QDebug>
 
 Goku::Goku(QGraphicsView* vista, QObject* parent)
@@ -12,7 +13,7 @@ Goku::Goku(QGraphicsView* vista, QObject* parent)
     tieneNubeVoladora = false;
     modoAtaque = false;
 
-    hojaSprites.load(":/sprites.png");
+    hojaSprites.load(Recursos::gokuSprite);
     sprite = hojaSprites.copy(spriteX, spriteY, spriteAncho, spriteAlto);
     setPixmap(sprite);
     setPos(100, 300);  // Posición inicial

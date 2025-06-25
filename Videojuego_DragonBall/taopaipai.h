@@ -16,12 +16,15 @@ public:
 private slots:
     void animarCaminar();
     void animarSalto();
+    void actualizarFisica();
 
 private:
     void actualizarFrame();
+    void mostrarCaida();
 
     QTimer* timerCaminar;
     QTimer* timerSaltar;
+    QTimer* timerFisica;
 
     QPixmap hojaSprites;
     QPixmap sprite;
@@ -30,6 +33,12 @@ private:
     int filaMaxima;
     int spriteAncho;
     int spriteAlto;
+
+    float velocidadY;
+    float gravedad;
+
+    bool enElAire;
+    bool estaMoviendose;
 };
 
 #endif // TAOPAIPAI_H
