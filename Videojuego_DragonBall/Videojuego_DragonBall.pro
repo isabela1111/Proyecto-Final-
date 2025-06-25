@@ -19,6 +19,7 @@ SOURCES += \
     nivel3.cpp \
     obstaculo.cpp \
     personaje.cpp \
+    piedra.cpp \
     recursos.cpp \
     taopaipai.cpp
 
@@ -32,6 +33,7 @@ HEADERS += \
     nivel3.h \
     obstaculo.h \
     personaje.h \
+    piedra.h \
     recursos.h \
     taopaipai.h\
 

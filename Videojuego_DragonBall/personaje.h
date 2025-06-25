@@ -8,6 +8,8 @@
 #include <QSize>
 #include <QGraphicsView>
 
+class Nivel1;
+
 class Personaje : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 public:

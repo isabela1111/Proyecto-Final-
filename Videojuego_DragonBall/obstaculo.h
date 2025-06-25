@@ -2,10 +2,21 @@
 #define OBSTACULO_H
 
 #include <QGraphicsPixmapItem>
+#include <QTimer>
 
-class Obstaculo : public QGraphicsPixmapItem {
+class Nivel1;
+
+class Obstaculo : public QObject, public QGraphicsPixmapItem
+{
+    Q_OBJECT
 public:
-    Obstaculo(QPixmap sprite, int x, int y);
+    Obstaculo(Nivel1* nivel, QGraphicsItem* parent = nullptr);
+    virtual void mover();
+    virtual void verificarColision();
+
+protected:
+    Nivel1* nivel;
+    QTimer* timerMovimiento;
 };
 
 #endif // OBSTACULO_H

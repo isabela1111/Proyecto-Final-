@@ -1,7 +1,7 @@
 #include "personaje.h"
 #include <QDebug>
 #include <QKeyEvent>
-
+#include "nivel1.h"
 Personaje::Personaje(QGraphicsView* vista, QObject* parent)
     : QObject(parent), QGraphicsPixmapItem()
 {
@@ -36,17 +36,18 @@ void Personaje::esquivar() {
     // Se sobreescribe en el hijo
 }
 
-
 void Personaje::keyPressEvent(QKeyEvent* event) {
+    Nivel1* nivel = qobject_cast<Nivel1*>(parent());
+    if (nivel && !nivel->juegoIniciado && !nivel->gameOverShown) {
+        nivel->comenzarJuego();
+    }
     switch (event->key()) {
     case Qt::Key_Up:
-        if (y() > 0) {
-            mover();
-        }
+        if (y() > 0) mover();
         break;
     case Qt::Key_Down:
         if (y() + boundingRect().height() < limites.height()) {
-            moveBy(0, velocidad);  // Solo bajar (sin animación)
+            moveBy(0, velocidad);
         }
         break;
     case Qt::Key_Space:
@@ -56,3 +57,4 @@ void Personaje::keyPressEvent(QKeyEvent* event) {
         break;
     }
 }
+

@@ -2,18 +2,19 @@
     <qresource prefix="/">
         <file>Recursos/fondos/fondo_nivel1.PNG</file>
         <file>Recursos/fondos/fondo_nivel2.PNG</file>
-        <file>Recursos/fondos/FondoMenu.jpg</file>
         <file>Recursos/fondos/fondo_nivel3.png</file>
-        <file>Recursos/Sprites/goku.png</file>
-        <file>Recursos/Sprites/gokunube.png</file>
-        <file>Recursos/Sprites/Taorun.PNG</file>
-        <file>Recursos/Sprites/Taocaido.PNG</file>
-        <file>Recursos/Sprites/Taojump.PNG</file>
-        <file>Recursos/fondos/fondoGameOverTao.jpg</file>
         <file>Recursos/fondos/fondoGameOverGoku.jpg</file>
+        <file>Recursos/fondos/fondoGameOverTao.jpg</file>
+        <file>Recursos/fondos/FondoMenu.jpg</file>
         <file>Recursos/fondos/fondoWinGoku.jpg</file>
         <file>Recursos/fondos/fondoWinTao.jpg</file>
-        <file>Recursos/Sprites/granada.png</file>
+        <file>Recursos/Sprites/Taojump.PNG</file>
+        <file>Recursos/Sprites/Taorun.PNG</file>
+        <file>Recursos/Sprites/Taocaido.PNG</file>
+        <file>Recursos/Sprites/goku.png</file>
+        <file>Recursos/Sprites/roca.png</file>
         <file>Recursos/Sprites/taopaipaienemie.png</file>
+        <file>Recursos/Sprites/gokunube.png</file>
+        <file>Recursos/Sprites/granada.png</file>
     </qresource>
 </RCC>

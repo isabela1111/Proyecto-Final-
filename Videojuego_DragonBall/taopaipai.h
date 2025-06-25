@@ -10,6 +10,10 @@ class TaoPaiPai : public Personaje {
 public:
     explicit TaoPaiPai(QGraphicsView* vista, QObject* parent = nullptr);
 
+    bool cayendo = false;
+
+
+    void mostrarCaida();
     void mover() override;
     void saltar() override;
 
@@ -20,7 +24,6 @@ private slots:
 
 private:
     void actualizarFrame();
-    void mostrarCaida();
 
     QTimer* timerCaminar;
     QTimer* timerSaltar;
@@ -39,6 +42,8 @@ private:
 
     bool enElAire;
     bool estaMoviendose;
+
+
 };
 
 #endif // TAOPAIPAI_H
