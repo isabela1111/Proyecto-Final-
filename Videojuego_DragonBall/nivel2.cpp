@@ -1,17 +1,21 @@
 #include "nivel2.h"
 #include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
 #include <QTimer>
 #include <QDebug>
+#include <QGraphicsTextItem>
+#include "recursos.h"
 
 Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
+    fondo.load(":/Recursos/fondos/fondo_nivel2.PNG");
+}
 
-    fondo.load(":/fondo_nivel2.png");
+void Nivel2::iniciarnivel() {
     QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondo);
     escena->addItem(fondoItem);
 
     goku = new Goku();
-    taoPaiPai = new TaoPaiPai(vista, this);
-
+    taoPaiPai = new TaoPaiPaiJefe();
 
     goku->setPos(100, 400);
     taoPaiPai->setPos(600, 400);
@@ -22,12 +26,80 @@ Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
     personajes.append(goku);
     personajes.append(taoPaiPai);
 
-    QTimer* timerAtaques = new QTimer(this);
-    connect(timerAtaques, &QTimer::timeout, this, &Nivel2::gestionarAtaques);
-    timerAtaques->start(2500); // Cada 2.5 segundos
+    crearBarrasVida();
+
+    timerAtaques = new QTimer(this);
+    connect(timerAtaques, &QTimer::timeout, taoPaiPai, &TaoPaiPaiJefe::lanzarGranada);
+    timerAtaques->start(3000);
 }
 
-void Nivel2::gestionarAtaques() {
-    // Tao Pai Pai lanza granada de forma parabolica
+void Nivel2::actualizar() {
+    if (!goku || !taoPaiPai) return;
 
+    actualizarBarrasVida();
+
+    if (goku->getVida() <= 0 && !derrotaMostrada) {
+        mostrarPantallaGameOver();
+        derrotaMostrada = true;
+        terminado = true;
+    }
+
+    if (taoPaiPai->getVida() <= 0 && !victoriaMostrada) {
+        mostrarPantallaVictoria();
+        victoriaMostrada = true;
+        terminado = true;
+    }
+}
+
+void Nivel2::mostrarPantallaGameOver() {
+    escena->clear();
+    QPixmap fondoGameOver(":/Recursos/fondos/fondoGameOverGoku.jpg");
+    if (fondoGameOver.isNull()) {
+        qDebug() << "No se pudo cargar imagen de derrota.";
+        return;
+    }
+    escena->addItem(new QGraphicsPixmapItem(fondoGameOver.scaled(800, 600)));
+}
+
+void Nivel2::mostrarPantallaVictoria() {
+    escena->clear();
+    QPixmap fondoVictoria(":/Recursos/fondos/fondoWinGoku.jpg");
+    if (fondoVictoria.isNull()) {
+        qDebug() << "No se pudo cargar imagen de victoria.";
+        return;
+    }
+    escena->addItem(new QGraphicsPixmapItem(fondoVictoria.scaled(800, 600)));
+}
+
+void Nivel2::crearBarrasVida() {
+    for (QGraphicsRectItem* barra : barrasVidaGoku)
+        delete barra;
+    for (QGraphicsRectItem* barra : barrasVidaTao)
+        delete barra;
+    barrasVidaGoku.clear();
+    barrasVidaTao.clear();
+
+    for (int i = 0; i < goku->getVida(); ++i) {
+        QGraphicsRectItem* barra = new QGraphicsRectItem(20 + i * 25, 20, 20, 20);
+        barra->setBrush(Qt::green);
+        escena->addItem(barra);
+        barrasVidaGoku.append(barra);
+    }
+
+    for (int i = 0; i < taoPaiPai->getVida(); ++i) {
+        QGraphicsRectItem* barra = new QGraphicsRectItem(580 + i * 25, 20, 20, 20);
+        barra->setBrush(Qt::red);
+        escena->addItem(barra);
+        barrasVidaTao.append(barra);
+    }
+}
+
+void Nivel2::actualizarBarrasVida() {
+    for (int i = 0; i < barrasVidaGoku.size(); ++i) {
+        barrasVidaGoku[i]->setVisible(i < goku->getVida());
+    }
+
+    for (int i = 0; i < barrasVidaTao.size(); ++i) {
+        barrasVidaTao[i]->setVisible(i < taoPaiPai->getVida());
+    }
 }
