@@ -1,28 +1,49 @@
-#ifndef TAOPAIPAIJEFE_H
-#define TAOPAIPAIJEFE_H
+#ifndef TAOPAIPAI_H
+#define TAOPAIPAI_H
 
 #include "personaje.h"
-#include "granada.h"
-
 #include <QTimer>
+#include <QPixmap>
 
-class TaoPaiPaiJefe : public Personaje {
+class TaoPaiPai : public Personaje {
     Q_OBJECT
-
 public:
-    TaoPaiPaiJefe(QGraphicsView* vista = nullptr, QObject* parent = nullptr);
-    void atacar() override;
-    void lanzarGranada();
-    void setObjetivo(Personaje* objetivo);
-    void mover() override;
+    explicit TaoPaiPai(QGraphicsView* vista, QObject* parent = nullptr);
 
-signals:
-    void granadaLanzada(Granada* granada);
+    bool cayendo = false;
+
+
+    void mostrarCaida();
+    void mover() override;
+    void saltar() override;
+
+private slots:
+    void animarCaminar();
+    void animarSalto();
+    void actualizarFisica();
 
 private:
-    Personaje* objetivoJugador;
-    bool puedeAtacar;
-    QTimer* movimientoTimer;
+    void actualizarFrame();
+
+    QTimer* timerCaminar;
+    QTimer* timerSaltar;
+    QTimer* timerFisica;
+
+    QPixmap hojaSprites;
+    QPixmap sprite;
+
+    int frameActual;
+    int filaMaxima;
+    int spriteAncho;
+    int spriteAlto;
+
+    float velocidadY;
+    float gravedad;
+
+    bool enElAire;
+    bool estaMoviendose;
+
+
 };
 
-#endif // TAOPAIPAIJEFE_H
+#endif // TAOPAIPAI_H
