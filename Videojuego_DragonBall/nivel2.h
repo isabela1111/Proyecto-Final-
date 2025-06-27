@@ -5,6 +5,7 @@
 #include "goku.h"
 #include "taopaipaijefe.h"
 #include <QGraphicsRectItem>
+#include <QTimer>
 
 class Nivel2 : public Nivel {
     Q_OBJECT
@@ -12,6 +13,7 @@ public:
     explicit Nivel2(QObject* parent = nullptr);
     void iniciarnivel() override;
     void actualizar() override;
+
     void mostrarPantallaGameOver();
     void mostrarPantallaVictoria();
     void crearBarrasVida();
@@ -20,10 +22,13 @@ private:
     Goku* goku;
     TaoPaiPaiJefe* taoPaiPai;
     QTimer* timerAtaques;
-    QVector<QGraphicsRectItem*> barrasVidaGoku;
-    QVector<QGraphicsRectItem*> barrasVidaTao;
-    bool victoriaMostrada = false;
-    bool derrotaMostrada = false;
+
+    QList<QGraphicsRectItem*> barrasVidaGoku;
+    QList<QGraphicsRectItem*> barrasVidaTao;
+
+    bool victoriaMostrada;
+    bool derrotaMostrada;
+    bool terminado;
 
     void actualizarBarrasVida();
 };

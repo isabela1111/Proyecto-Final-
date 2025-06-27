@@ -1,4 +1,6 @@
 #include "taopaipaijefe.h"
+#include "recursos.h"
+
 #include <QTimer>
 #include <QDebug>
 
@@ -8,7 +10,7 @@ TaoPaiPaiJefe::TaoPaiPaiJefe(QGraphicsView* vista, QObject* parent)
     vida = 5;
     velocidad = 3;
 
-    hojaSprites.load(":/Recursos/Sprites/taopaipaienemie.png");
+    hojaSprites.load(Recursos::TaoenemigoSprite);
     spriteX = 0;
     spriteY = 0;
     spriteAncho = 60;
@@ -19,12 +21,11 @@ TaoPaiPaiJefe::TaoPaiPaiJefe(QGraphicsView* vista, QObject* parent)
 }
 
 void TaoPaiPaiJefe::atacar() {
-    // Se lanza granada por temporizador
     lanzarGranada();
 }
 
 void TaoPaiPaiJefe::lanzarGranada() {
-    if (!puedeAtacar) return;
+    if (!puedeAtacar || !objetivoJugador) return;
 
     qDebug() << "Tao Pai Pai lanza una granada.";
 
@@ -36,3 +37,8 @@ void TaoPaiPaiJefe::lanzarGranada() {
         puedeAtacar = true;
     });
 }
+
+void TaoPaiPaiJefe::setObjetivo(Personaje* objetivo) {
+    objetivoJugador = objetivo;
+}
+

@@ -84,8 +84,15 @@ void MainWindow::iniciarNivel1() {
 
 
 void MainWindow::iniciarNivel2() {
-    // Aqui ira la logica para cargar Nivel 2
+    QGraphicsView* vista = new QGraphicsView();
+    nivel2 = new Nivel2();
+    nivel2->iniciarnivel();
+
+    vista->setScene(nivel2->escena);
+    vista->setFixedSize(800, 600);
+    vista->show();
 }
+
 
 void MainWindow::iniciarNivel3() {
     // Aqui ira la logica para cargar Nivel 3

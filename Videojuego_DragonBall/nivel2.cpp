@@ -1,21 +1,30 @@
 #include "nivel2.h"
-#include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
-#include <QTimer>
 #include <QDebug>
-#include <QGraphicsTextItem>
 #include "recursos.h"
 
 Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
-    fondo.load(":/Recursos/fondos/fondo_nivel2.PNG");
+    escena = nullptr;
+    goku = nullptr;
+    taoPaiPai = nullptr;
+    timerAtaques = nullptr;
+    derrotaMostrada = false;
+    victoriaMostrada = false;
+    terminado = false;
+
+    fondo.load(Recursos::fondoNivel2);
 }
 
 void Nivel2::iniciarnivel() {
-    QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondo);
+    escena = new QGraphicsScene();
+    escena->setSceneRect(0, 0, 800, 600);
+
+    QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondo.scaled(800, 600));
     escena->addItem(fondoItem);
 
     goku = new Goku();
     taoPaiPai = new TaoPaiPaiJefe();
+    taoPaiPai->setObjetivo(goku);
 
     goku->setPos(100, 400);
     taoPaiPai->setPos(600, 400);
@@ -51,26 +60,6 @@ void Nivel2::actualizar() {
     }
 }
 
-void Nivel2::mostrarPantallaGameOver() {
-    escena->clear();
-    QPixmap fondoGameOver(":/Recursos/fondos/fondoGameOverGoku.jpg");
-    if (fondoGameOver.isNull()) {
-        qDebug() << "No se pudo cargar imagen de derrota.";
-        return;
-    }
-    escena->addItem(new QGraphicsPixmapItem(fondoGameOver.scaled(800, 600)));
-}
-
-void Nivel2::mostrarPantallaVictoria() {
-    escena->clear();
-    QPixmap fondoVictoria(":/Recursos/fondos/fondoWinGoku.jpg");
-    if (fondoVictoria.isNull()) {
-        qDebug() << "No se pudo cargar imagen de victoria.";
-        return;
-    }
-    escena->addItem(new QGraphicsPixmapItem(fondoVictoria.scaled(800, 600)));
-}
-
 void Nivel2::crearBarrasVida() {
     for (QGraphicsRectItem* barra : barrasVidaGoku)
         delete barra;
@@ -102,4 +91,24 @@ void Nivel2::actualizarBarrasVida() {
     for (int i = 0; i < barrasVidaTao.size(); ++i) {
         barrasVidaTao[i]->setVisible(i < taoPaiPai->getVida());
     }
+}
+
+void Nivel2::mostrarPantallaGameOver() {
+    escena->clear();
+    QPixmap fondoGameOver(Recursos::fondoGameOverGoku);
+    if (fondoGameOver.isNull()) {
+        qDebug() << "No se pudo cargar imagen de derrota.";
+        return;
+    }
+    escena->addItem(new QGraphicsPixmapItem(fondoGameOver.scaled(800, 600)));
+}
+
+void Nivel2::mostrarPantallaVictoria() {
+    escena->clear();
+    QPixmap fondoVictoria(Recursos::fondoWinGoku);
+    if (fondoVictoria.isNull()) {
+        qDebug() << "No se pudo cargar imagen de victoria.";
+        return;
+    }
+    escena->addItem(new QGraphicsPixmapItem(fondoVictoria.scaled(800, 600)));
 }

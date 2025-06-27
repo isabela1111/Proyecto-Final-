@@ -5,6 +5,8 @@
 #include <QGraphicsTextItem>
 #include <QPushButton>
 #include "nivel1.h"
+#include "nivel2.h"
+#include "nivel3.h"
 #include "juego.h"
 #include "recursos.h"
 
@@ -29,6 +31,7 @@ private:
     QPushButton* botonNivel3;
 
     Nivel1* nivel1;
+    Nivel2* nivel2;
 
 private slots:
     void iniciarNivel1();

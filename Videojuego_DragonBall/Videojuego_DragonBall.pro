@@ -21,7 +21,9 @@ SOURCES += \
     personaje.cpp \
     piedra.cpp \
     recursos.cpp \
-    taopaipai.cpp
+    taopaipai.cpp \
+    taopaipaijefe.cpp\
+    granada.cpp
 
 HEADERS += \
     goku.h \
@@ -36,6 +38,8 @@ HEADERS += \
     piedra.h \
     recursos.h \
     taopaipai.h\
+    taopaipaijefe.h\
+    granada.h
 
 FORMS += \
     mainwindow.ui

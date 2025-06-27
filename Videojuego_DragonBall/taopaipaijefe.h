@@ -10,12 +10,14 @@ public:
     explicit TaoPaiPaiJefe(QGraphicsView* vista = nullptr, QObject* parent = nullptr);
     void atacar() override;
     void lanzarGranada();
+    void setObjetivo(Personaje* objetivo);
 
 signals:
     void granadaLanzada(Granada* granada);
 
 private:
     bool puedeAtacar;
+    Personaje* objetivoJugador = nullptr;
 };
 
 #endif // TAOPAIPAIJEFE_H
