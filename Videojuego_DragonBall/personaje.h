@@ -29,6 +29,7 @@ public:
 
     QPixmap hojaSprites;
     QPixmap sprite;
+    int getVida() const;
 
     virtual void recibirDanio(int cantidad);
     virtual void mover();

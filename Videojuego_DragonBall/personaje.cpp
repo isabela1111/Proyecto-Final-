@@ -58,3 +58,8 @@ void Personaje::keyPressEvent(QKeyEvent* event) {
     }
 }
 
+int Personaje::getVida() const {
+    return vida;
+}
+
+

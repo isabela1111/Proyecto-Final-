@@ -14,7 +14,7 @@ Goku::Goku(QGraphicsView* vista, QObject* parent)
     spriteAncho = 60;
     spriteAlto = 60;
 
-    hojaSprites.load(":/Recursos/Sprites/goku.png");
+    hojaSprites.load("Recusos::gokuSprite");
     setPixmap(hojaSprites.copy(0, 0, spriteAncho, spriteAlto));
     setPos(100, 400);
     setFlag(QGraphicsItem::ItemIsFocusable);
@@ -71,7 +71,6 @@ void Goku::keyPressEvent(QKeyEvent* event) {
         }
     }
 }
-
 
 void Goku::usarNube() {
     tieneNubeVoladora = true;
