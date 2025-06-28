@@ -7,6 +7,8 @@
 #include "nivel1.h"
 #include "nivel2.h"
 #include "nivel3.h"
+#include <QMediaPlayer>
+#include <QAudioOutput>
 #include "juego.h"
 #include "recursos.h"
 
@@ -32,6 +34,11 @@ private:
 
     Nivel1* nivel1;
     Nivel2* nivel2;
+    Nivel3* nivel3;
+
+    QMediaPlayer* reproductorIntro;
+    QAudioOutput* salidaAudio;
+
 
 private slots:
     void iniciarNivel1();

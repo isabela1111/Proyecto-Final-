@@ -18,8 +18,14 @@ const QString Recursos::TaoJumpSprite = ":/Recursos/Sprites/Taojump.PNG";
 const QString Recursos::TaoCaidoSprite = ":/Recursos/Sprites/Taocaido.PNG";
 const QString Recursos::RocaSprite =  ":/Recursos/Sprites/roca.png";
 const QString Recursos::granadaSprite = ":/Recursos/Sprites/granada.png";
-const QString Recursos::TaoenemigoSprite = ":/Recursos/Sprites/taopaienemie.png";
+const QString Recursos::TaoenemigoSprite = ":/Recursos/Sprites/taopaipaienemie.png";
+const QString Recursos::gokuNubeSprite = ":/Recursos/Sprites/GokuNube1.PNG";
+const QString Recursos::avionEnemigo1Sprite = ":/Recursos/Sprites/avionEnemigo1.PNG";
+const QString Recursos::avionEnemigo2Sprite= ":/Recursos/Sprites/avionEnemigo2.PNG";
 
 
+const QString Recursos::sonidoSalto = ":/Recursos/Sonidos/salto.wav";
+const QString Recursos::sonidoGolpe = ":/Recursos/Sonidos/golpe.wav";
+const QString Recursos::sonidoIntro = ":/Recursos/Sonidos/intro.wav";
 
 

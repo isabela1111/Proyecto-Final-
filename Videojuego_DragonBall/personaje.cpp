@@ -36,10 +36,22 @@ void Personaje::esquivar() {
     // Se sobreescribe en el hijo
 }
 
+int Personaje::getVida() const {
+    return vida;
+}
+
 void Personaje::keyPressEvent(QKeyEvent* event) {
     Nivel1* nivel = qobject_cast<Nivel1*>(parent());
     if (nivel && !nivel->juegoIniciado && !nivel->gameOverShown) {
-        nivel->comenzarJuego();
+        if (event->key() == Qt::Key_E) {
+            nivel->comenzarJuego();
+            if (nivel->textoInicio) {
+                nivel->escena->removeItem(nivel->textoInicio);
+                delete nivel->textoInicio;
+                nivel->textoInicio = nullptr;
+            }
+        }
+        return;
     }
     switch (event->key()) {
     case Qt::Key_Up:
@@ -56,10 +68,6 @@ void Personaje::keyPressEvent(QKeyEvent* event) {
     default:
         break;
     }
-}
-
-int Personaje::getVida() const {
-    return vida;
 }
 
 

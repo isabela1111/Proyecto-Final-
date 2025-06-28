@@ -2,20 +2,27 @@
 #define TAOPAIPAI_H
 
 #include "personaje.h"
+#include <QGraphicsPixmapItem>
 #include <QTimer>
-#include <QPixmap>
+#include <QSoundEffect>
+#include <QKeyEvent>
+#include <QGraphicsView>
 
 class TaoPaiPai : public Personaje {
     Q_OBJECT
 public:
     explicit TaoPaiPai(QGraphicsView* vista, QObject* parent = nullptr);
 
-    bool cayendo = false;
-
-
-    void mostrarCaida();
     void mover() override;
     void saltar() override;
+
+    void keyPressEvent(QKeyEvent* event) override;
+    void mostrarCaida();
+    void reproducirSonidoGolpe();
+    void reiniciarFisica();
+    void activarFisica(bool activo);
+
+    bool cayendo;
 
 private slots:
     void animarCaminar();
@@ -23,27 +30,33 @@ private slots:
     void actualizarFisica();
 
 private:
-    void actualizarFrame();
+    // Estado y fisicas
+    float posX;
+    float posY;
+    float velocidadY;
+    float gravedad;
+    bool enElAire;
+    bool estaMoviendose;
+    bool puedeSaltar = true;
 
+    // Sprite y animaciones
+    QPixmap hojaSprites;
+    QPixmap sprite;
+    int frameActual;
+    int spriteAncho;
+    int spriteAlto;
+    int filaMaxima;
+
+    // Timers
     QTimer* timerCaminar;
     QTimer* timerSaltar;
     QTimer* timerFisica;
 
-    QPixmap hojaSprites;
-    QPixmap sprite;
+    // Sonidos
+    QSoundEffect* efectoSalto;
+    QSoundEffect* efectoGolpe;
 
-    int frameActual;
-    int filaMaxima;
-    int spriteAncho;
-    int spriteAlto;
-
-    float velocidadY;
-    float gravedad;
-
-    bool enElAire;
-    bool estaMoviendose;
-
-
+    void actualizarFrame();
 };
 
 #endif // TAOPAIPAI_H

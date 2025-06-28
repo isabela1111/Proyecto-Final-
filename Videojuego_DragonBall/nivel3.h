@@ -2,21 +2,36 @@
 #define NIVEL3_H
 
 #include "nivel.h"
-#include "goku.h"
+#include "gokunube.h"
+#include "avionenemigo.h"
 
-class Nivel3 : public Nivel {
+#include <QGraphicsTextItem>
+#include <QGraphicsRectItem>
+#include <QVector>
+
+class Nivel3 : public Nivel
+{
     Q_OBJECT
 public:
-    explicit Nivel3(QObject* parent = nullptr);
-
-    float velocidadVuelo;
-    Goku* goku;
-
-    void generarEnemigos();
-    void detectarImpactos();
-    void ajustarDireccion();
+    Nivel3(QGraphicsView* vista, QObject* parent = nullptr);
     void iniciarnivel() override;
+    void actualizar() override;
 
+private:
+    QGraphicsView* vista;
+    GokuNube* goku;
+    int distanciaRecorrida;
+    int vidas;
+    QGraphicsTextItem* textoDistancia;
+    QVector<QGraphicsRectItem*> barrasVida;
+
+    QTimer* timerObstaculos;
+    QTimer* timerDistancia;
+
+    void generarObstaculo();
+    void actualizarDistancia();
+    void perderVida();
+    void mostrarGameOver();
 };
 
 #endif // NIVEL3_H

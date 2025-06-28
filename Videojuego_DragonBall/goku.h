@@ -12,8 +12,8 @@ public:
     void mover() override;
     void saltar() override;
     void atacar() override;
-    void usarNube();
     void devolverGranada();  // activa modo ataque
+    bool tieneNubeVoladora;
 
     void keyPressEvent(QKeyEvent* event) override;
 

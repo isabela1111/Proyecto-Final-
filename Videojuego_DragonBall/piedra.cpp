@@ -1,5 +1,7 @@
 #include "piedra.h"
 #include "recursos.h"
+
+
 #include <QGraphicsScene>
 
 Piedra::Piedra(Nivel1* nivel, QGraphicsItem* parent)
@@ -26,5 +28,5 @@ void Piedra::actualizarFrame(){
         fila * altoFrame,
         anchoFrame,
         altoFrame );
-    setPixmap(frame.scaled(40, 40));
+    setPixmap(frame.scaled(30, 30));
 }

@@ -51,11 +51,6 @@ void Goku::atacar() {
     temporizadorAtaque->start(300); // ataque activo por 300 ms
 }
 
-void Goku::usarNube() {
-    tieneNubeVoladora = true;
-    qDebug() << "Goku ha activado la nube voladora.";
-}
-
 void Goku::devolverGranada() {
     modoAtaque = true;
     temporizadorAtaque->start(300);
