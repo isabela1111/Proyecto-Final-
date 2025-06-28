@@ -1,6 +1,4 @@
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += core gui widgets multimedia
 
 CONFIG += c++17
 
@@ -22,7 +20,7 @@ SOURCES += \
     piedra.cpp \
     recursos.cpp \
     taopaipai.cpp \
-    taopaipaijefe.cpp\
+    taopaipaijefe.cpp \
     granada.cpp
 
 HEADERS += \
@@ -37,8 +35,8 @@ HEADERS += \
     personaje.h \
     piedra.h \
     recursos.h \
-    taopaipai.h\
-    taopaipaijefe.h\
+    taopaipai.h \
+    taopaipaijefe.h \
     granada.h
 
 FORMS += \

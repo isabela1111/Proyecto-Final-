@@ -16,5 +16,9 @@
         <file>Recursos/Sprites/taopaipaienemie.png</file>
         <file>Recursos/Sprites/gokunube.png</file>
         <file>Recursos/Sprites/granada.png</file>
+        <file>Recursos/Sprites/TaoJump1.png</file>
+        <file>Recursos/Sonidos/golpe.wav</file>
+        <file>Recursos/Sonidos/salto.wav</file>
+        <file>Recursos/Sonidos/intro.wav</file>
     </qresource>
 </RCC>

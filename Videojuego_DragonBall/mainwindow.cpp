@@ -7,19 +7,23 @@
 #include <QImage>
 #include <QFont>
 
-
 Juego* juegoGlobal = nullptr;
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    reproductorIntro = new QMediaPlayer(this);
+    salidaAudio = new QAudioOutput(this);
+
+    reproductorIntro->setAudioOutput(salidaAudio);
+    reproductorIntro->setSource(QUrl("qrc" + Recursos::sonidoIntro));
+    salidaAudio->setVolume(0.5);
+    reproductorIntro->play();
     this->resize(800, 700);
 
     escena = new QGraphicsScene(this);
     ui->graphicsView_->setScene(escena);
-
 
     QImage fondoOriginal(Recursos::fondoMenu);
     QImage fondoEscalado = fondoOriginal.scaled(
@@ -73,6 +77,8 @@ MainWindow::~MainWindow() {
 
 
 void MainWindow::iniciarNivel1() {
+    if (reproductorIntro && reproductorIntro->isPlaying())
+        reproductorIntro->stop();
     QGraphicsView* vista = new QGraphicsView();
     nivel1 = new Nivel1(vista);
     nivel1->iniciarnivel();
@@ -84,6 +90,8 @@ void MainWindow::iniciarNivel1() {
 
 
 void MainWindow::iniciarNivel2() {
+    if (reproductorIntro && reproductorIntro->isPlaying())
+        reproductorIntro->stop();
     QGraphicsView* vista = new QGraphicsView();
     nivel2 = new Nivel2();
     nivel2->iniciarnivel();
@@ -95,5 +103,14 @@ void MainWindow::iniciarNivel2() {
 
 
 void MainWindow::iniciarNivel3() {
-    // Aqui ira la logica para cargar Nivel 3
+    if (reproductorIntro && reproductorIntro->isPlaying())
+        reproductorIntro->stop();
+    QGraphicsView* vista = new QGraphicsView();
+    nivel3 = new Nivel3();
+    nivel3->iniciarnivel();
+
+    vista->setScene(nivel3->escena);
+    vista->setFixedSize(800, 600);
+    vista->show();
 }
+

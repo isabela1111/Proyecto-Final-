@@ -18,7 +18,6 @@ public:
     static const QString fondoWinGoku;
 
     // Sprites
-
     static const QString gokuSprite;
     static const QString TaoRunSprite;
     static const QString TaoJumpSprite;
@@ -26,6 +25,13 @@ public:
     static const QString RocaSprite;
     static const QString granadaSprite;
     static const QString TaoenemigoSprite;
+
+    //Sonidos
+    static const QString sonidoIntro;
+    static const QString sonidoSalto;
+    static const QString sonidoGolpe;
+
+
 
 };
 

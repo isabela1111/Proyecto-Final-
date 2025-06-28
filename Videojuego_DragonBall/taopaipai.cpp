@@ -1,10 +1,11 @@
 #include "taopaipai.h"
 #include "recursos.h"
+#include <QKeyEvent>
 #include <QDebug>
 
 TaoPaiPai::TaoPaiPai(QGraphicsView* vista, QObject* parent)
-    : Personaje(vista, parent), frameActual(0), filaMaxima(5),
-    velocidadY(0), gravedad(0.7), enElAire(false), estaMoviendose(false)
+    : Personaje(vista, parent),velocidadY(0),gravedad(0.7),enElAire(false), estaMoviendose(false),
+    frameActual(0), filaMaxima(5)
 {
     nombre = "Tao Pai Pai";
     vida = 5;
@@ -13,18 +14,15 @@ TaoPaiPai::TaoPaiPai(QGraphicsView* vista, QObject* parent)
 
     spriteAncho = 68;
     spriteAlto = 59;
-    posX = 250;
+    posX = 252;
     posY = 500;
 
     hojaSprites.load(Recursos::TaoRunSprite);
-    hojaSprites.setMask(hojaSprites.createMaskFromColor(QColor(128, 0, 128), Qt::MaskInColor));
-
     actualizarFrame();
     setPos(posX, posY);
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
 
-    // Animaciones
     timerCaminar = new QTimer(this);
     connect(timerCaminar, &QTimer::timeout, this, &TaoPaiPai::animarCaminar);
 
@@ -33,18 +31,34 @@ TaoPaiPai::TaoPaiPai(QGraphicsView* vista, QObject* parent)
 
     timerFisica = new QTimer(this);
     connect(timerFisica, &QTimer::timeout, this, &TaoPaiPai::actualizarFisica);
-    timerFisica->start(30);  // 30 ms para física
+
+    efectoSalto = new QSoundEffect(this);
+    efectoSalto->setSource(QUrl("qrc" + Recursos::sonidoSalto));
+    efectoSalto->setVolume(0.5);
+
+    efectoGolpe = new QSoundEffect(this);
+    efectoGolpe->setSource(QUrl("qrc" + Recursos::sonidoGolpe));
+    efectoGolpe->setVolume(0.6);
+}
+
+void TaoPaiPai::activarFisica(bool activo) {
+    if (activo) {
+        if (!timerFisica->isActive())
+            timerFisica->start(30);
+    } else {
+        timerFisica->stop();
+    }
 }
 
 void TaoPaiPai::actualizarFrame() {
-    int yFrame = frameActual * spriteAlto;
+    int yFrame = (filaMaxima - 1 - frameActual) * spriteAlto;
     sprite = hojaSprites.copy(0, yFrame, spriteAncho, spriteAlto);
     setPixmap(sprite);
 }
 
 void TaoPaiPai::mover() {
     estaMoviendose = true;
-    velocidadY = -5;  // Subir
+    velocidadY = -5;
     hojaSprites.load(Recursos::TaoRunSprite);
     frameActual = 0;
     timerCaminar->start(100);
@@ -56,6 +70,7 @@ void TaoPaiPai::saltar() {
     hojaSprites.load(Recursos::TaoJumpSprite);
     frameActual = 0;
     timerSaltar->start(100);
+    efectoSalto->play();
 }
 
 void TaoPaiPai::animarCaminar() {
@@ -74,7 +89,6 @@ void TaoPaiPai::animarSalto() {
         frameActual = 0;
         timerSaltar->stop();
         estaMoviendose = false;
-        mover();
         return;
     }
     actualizarFrame();
@@ -83,20 +97,43 @@ void TaoPaiPai::animarSalto() {
 
 void TaoPaiPai::actualizarFisica() {
     if (!estaMoviendose) {
-        velocidadY += gravedad;}
-    moveBy(0, velocidadY);  // SOLO movimiento vertical
+        velocidadY += gravedad;
+    }
+    moveBy(0, velocidadY);
     if (y() + boundingRect().height() > 600) {
-        mostrarCaida();}
-    // Si llega muy arriba, reinicia abajo
+        mostrarCaida();
+    }
     if (y() < 50) {
-        setY(500); }
+        setY(500);
+    }
     setX(250);
 }
 
 void TaoPaiPai::mostrarCaida() {
     hojaSprites.load(Recursos::TaoCaidoSprite);
+    hojaSprites.setMask(hojaSprites.createMaskFromColor(QColor(128, 0, 128), Qt::MaskInColor));
     sprite = hojaSprites.copy(0, 0, spriteAncho, spriteAlto);
     setPixmap(sprite);
     velocidadY = 0;
     estaMoviendose = false;
+    efectoGolpe->play();
+}
+
+void TaoPaiPai::keyPressEvent(QKeyEvent* event) {
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_W) {
+        mover();
+    }
+    else if (event->key() == Qt::Key_Space) {
+        saltar();
+    }
+    Personaje::keyPressEvent(event);
+}
+
+void TaoPaiPai::reproducirSonidoGolpe() {
+    if (efectoGolpe) efectoGolpe->play();
+}
+
+void TaoPaiPai::reiniciarFisica() {
+    velocidadY = 0;
+    cayendo = false;
 }
