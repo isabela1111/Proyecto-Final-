@@ -14,11 +14,14 @@
         <file>Recursos/Sprites/goku.png</file>
         <file>Recursos/Sprites/roca.png</file>
         <file>Recursos/Sprites/taopaipaienemie.png</file>
-        <file>Recursos/Sprites/gokunube.png</file>
         <file>Recursos/Sprites/granada.png</file>
         <file>Recursos/Sprites/TaoJump1.png</file>
         <file>Recursos/Sonidos/golpe.wav</file>
         <file>Recursos/Sonidos/salto.wav</file>
         <file>Recursos/Sonidos/intro.wav</file>
+        <file>Recursos/Sprites/gokunube2.PNG</file>
+        <file>Recursos/Sprites/GokuNube1.PNG</file>
+        <file>Recursos/Sprites/avionEnemigo1.PNG</file>
+        <file>Recursos/Sprites/avionEnemigo2.PNG</file>
     </qresource>
 </RCC>

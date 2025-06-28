@@ -25,6 +25,10 @@ public:
     static const QString RocaSprite;
     static const QString granadaSprite;
     static const QString TaoenemigoSprite;
+    static const QString gokuNubeSprite;
+    static const QString avionEnemigo1Sprite;
+    static const QString avionEnemigo2Sprite;
+
 
     //Sonidos
     static const QString sonidoIntro;

@@ -101,16 +101,15 @@ void MainWindow::iniciarNivel2() {
     vista->show();
 }
 
-
 void MainWindow::iniciarNivel3() {
     if (reproductorIntro && reproductorIntro->isPlaying())
         reproductorIntro->stop();
+
     QGraphicsView* vista = new QGraphicsView();
-    nivel3 = new Nivel3();
+    nivel3 = new Nivel3(vista);
     nivel3->iniciarnivel();
 
     vista->setScene(nivel3->escena);
     vista->setFixedSize(800, 600);
     vista->show();
 }
-

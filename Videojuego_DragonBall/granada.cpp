@@ -7,7 +7,7 @@
 Granada::Granada(qreal xInicial, qreal yInicial, QGraphicsItem* objetivoJugador, bool esDevuelta)
     : objetivo(objetivoJugador), devuelta(esDevuelta) {
 
-    hojaGranada.load(":/Recursos/Sprites/granada.png");
+    hojaGranada.load("Recursos::granadaSprite");
     spriteAncho = 32;
     spriteAlto = 32;
     frameActual = 0;
