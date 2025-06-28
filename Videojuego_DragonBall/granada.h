@@ -2,33 +2,31 @@
 #define GRANADA_H
 
 #include <QGraphicsPixmapItem>
-#include <QObject>
 #include <QTimer>
-#include <QGraphicsScene>
+#include <QObject>
 
 class Granada : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
-public:
-    Granada(qreal xInicial, qreal yInicial, QGraphicsItem* objetivo);
 
-public slots:
+public:
+    Granada(qreal xInicial, qreal yInicial, QGraphicsItem* objetivoJugador = nullptr, bool esDevuelta = false);
+
     void mover();
     void explotar();
 
 private:
+    QPixmap hojaGranada;
+    QGraphicsItem* objetivo;
+    int spriteAncho;
+    int spriteAlto;
+    int frameActual;
+    int frameExplosion;
+    bool explotando;
+    bool devuelta;
+
     qreal velocidadX;
     qreal velocidadY;
     qreal gravedad;
-
-    QPixmap hojaGranada;
-    int frameActual;
-    int spriteAncho;
-    int spriteAlto;
-
-    bool explotando;
-    int frameExplosion;
-
-    QGraphicsItem* objetivo;
 };
 
-#endif //GRANADA_H
+#endif // GRANADA_H

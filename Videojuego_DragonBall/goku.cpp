@@ -1,12 +1,15 @@
 #include "goku.h"
 #include <QKeyEvent>
 #include <QDebug>
+#include <QTimer>
+#include "recursos.h"
 
 Goku::Goku(QGraphicsView* vista, QObject* parent)
     : Personaje(vista, parent),
       frameActual(0),
       tiempoSalto(0),
-      enElAire(false)
+      enElAire(false),
+      modoAtaque(false)
 {
     nombre = "Goku";
     vida = 5;
@@ -14,17 +17,24 @@ Goku::Goku(QGraphicsView* vista, QObject* parent)
     spriteAncho = 60;
     spriteAlto = 60;
 
-    hojaSprites.load("Recusos::gokuSprite");
+    hojaSprites.load(Recursos::gokuSprite);
     setPixmap(hojaSprites.copy(0, 0, spriteAncho, spriteAlto));
     setPos(100, 400);
+
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
+
+    temporizadorAtaque = new QTimer(this);
+    temporizadorAtaque->setSingleShot(true);
+    connect(temporizadorAtaque, &QTimer::timeout, this, [this]() {
+        modoAtaque = false;
+    });
 }
 
 void Goku::mover() {
     frameActual = (frameActual + 1) % 4;
     setPixmap(hojaSprites.copy(frameActual * spriteAncho, 0, spriteAncho, spriteAlto));
-    moveBy(velocidad, 0);
+    // movimiento ya se hace en keyPressEvent
 }
 
 void Goku::saltar() {
@@ -35,8 +45,25 @@ void Goku::saltar() {
 }
 
 void Goku::atacar() {
-    qDebug() << "Goku realiza un ataque básico.";
+    qDebug() << "Goku realiza un ataque.";
     setPixmap(hojaSprites.copy(0, 60, spriteAncho, spriteAlto));
+    modoAtaque = true;
+    temporizadorAtaque->start(300); // ataque activo por 300 ms
+}
+
+void Goku::usarNube() {
+    tieneNubeVoladora = true;
+    qDebug() << "Goku ha activado la nube voladora.";
+}
+
+void Goku::devolverGranada() {
+    modoAtaque = true;
+    temporizadorAtaque->start(300);
+    qDebug() << "Goku está intentando devolver la granada.";
+}
+
+bool Goku::estaEnModoAtaque() const {
+    return modoAtaque;
 }
 
 void Goku::keyPressEvent(QKeyEvent* event) {
@@ -70,14 +97,4 @@ void Goku::keyPressEvent(QKeyEvent* event) {
             setY(400);
         }
     }
-}
-
-void Goku::usarNube() {
-    tieneNubeVoladora = true;
-    qDebug() << "Goku ha activado la nube voladora.";
-}
-
-void Goku::devolverGranada() {
-    modoAtaque = true;
-    qDebug() << "Goku está intentando devolver la granada.";
 }

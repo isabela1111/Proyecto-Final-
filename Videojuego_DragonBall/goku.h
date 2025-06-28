@@ -5,28 +5,26 @@
 
 class Goku : public Personaje {
     Q_OBJECT
+
 public:
-    explicit Goku(QGraphicsView* vista = nullptr, QObject* parent = nullptr);
+    Goku(QGraphicsView* vista = nullptr, QObject* parent = nullptr);
 
     void mover() override;
     void saltar() override;
     void atacar() override;
-
-    int getVida() const { return vida; }
-    bool tieneNubeVoladora;
-    bool modoAtaque;
-
     void usarNube();
-    void devolverGranada();
+    void devolverGranada();  // activa modo ataque
 
-protected:
     void keyPressEvent(QKeyEvent* event) override;
 
+    bool estaEnModoAtaque() const;
+
 private:
-    QPixmap hojaSprites;
     int frameActual;
     int tiempoSalto;
     bool enElAire;
+    bool modoAtaque;
+    QTimer* temporizadorAtaque;
 };
 
 #endif // GOKU_H
