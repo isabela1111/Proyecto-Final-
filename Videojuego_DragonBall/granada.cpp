@@ -1,5 +1,6 @@
 #include "granada.h"
 #include <QPixmap>
+#include <QSoundEffect>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QDebug>
@@ -62,7 +63,12 @@ void Granada::mover() {
 void Granada::explotar() {
     explotando = true;
     frameExplosion = 0;
+    setPixmap(hojaGranada.copy(0, 32, spriteAncho, spriteAlto));
     velocidadX = 0;
     velocidadY = 0;
-    setPixmap(hojaGranada.copy(0, 32, spriteAncho, spriteAlto));
+
+    QSoundEffect* sonidoExplosion = new QSoundEffect(this);
+    sonidoExplosion->setSource(QUrl("qrc:/Recursos/Sonidos/explosion.wav"));
+    sonidoExplosion->play();
 }
+
