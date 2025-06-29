@@ -2,6 +2,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QTimer>
+#include <QSoundEffect>
 #include "recursos.h"
 
 Goku::Goku(QGraphicsView* vista, QObject* parent)
@@ -41,6 +42,11 @@ void Goku::saltar() {
     if (!enElAire) {
         tiempoSalto = 15;
         enElAire = true;
+
+        // Sonido de salto
+        QSoundEffect* sonidoSalto = new QSoundEffect(this);
+        sonidoSalto->setSource(QUrl("qrc:/Recursos/Sonidos/salto.wav"));
+        sonidoSalto->play();
     }
 }
 
@@ -49,6 +55,9 @@ void Goku::atacar() {
     setPixmap(hojaSprites.copy(0, 60, spriteAncho, spriteAlto));
     modoAtaque = true;
     temporizadorAtaque->start(300); // ataque activo por 300 ms
+    QSoundEffect* sonidoGolpe = new QSoundEffect(this);
+    sonidoGolpe->setSource(QUrl("qrc:/Recursos/Sonidos/golpe.wav"));
+    sonidoGolpe->play();
 }
 
 void Goku::devolverGranada() {
