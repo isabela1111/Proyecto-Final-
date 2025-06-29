@@ -19,6 +19,8 @@
         <file>Recursos/Sonidos/golpe.wav</file>
         <file>Recursos/Sonidos/salto.wav</file>
         <file>Recursos/Sonidos/intro.wav</file>
+        <file>Recursos/Sonidos/gokusalto.wav</file>
+        <file>Recursos/Sonidos/explosion.wav</file>
         <file>Recursos/Sprites/gokunube2.PNG</file>
         <file>Recursos/Sprites/GokuNube1.PNG</file>
         <file>Recursos/Sprites/avionEnemigo1.PNG</file>
