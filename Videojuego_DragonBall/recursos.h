@@ -19,6 +19,7 @@ public:
 
     // Sprites
     static const QString gokuSprite;
+|   static const QString misilSprite;
     static const QString TaoRunSprite;
     static const QString TaoJumpSprite;
     static const QString TaoCaidoSprite;
