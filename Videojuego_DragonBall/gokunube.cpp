@@ -2,8 +2,9 @@
 #include "recursos.h"
 
 GokuNube::GokuNube(QGraphicsView* vista, QObject* parent)
-    : QObject(parent), vista(vista), velocidad(10), frameActual(0)
+    : Personaje(vista, parent), frameActual(0)
 {
+    velocidad = 10;
     hojaSprites.load(Recursos::gokuNubeSprite);
     setPixmap(hojaSprites.copy(0, 0, 70, 44));
 
@@ -23,9 +24,11 @@ void GokuNube::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Up) {
         if (y() - velocidad >= 0)
             setY(y() - velocidad);
-    } else if (event->key() == Qt::Key_Down) {
-        if (y() + boundingRect().height() + velocidad <= vista->height())
+    }
+    else if (event->key() == Qt::Key_Down) {
+        if (vista && y() + boundingRect().height() + velocidad <= vista->height()) {
             setY(y() + velocidad);
+        }
     }
 }
 
@@ -39,6 +42,4 @@ void GokuNube::moverAutomatico() {
     setX(x() + 3);
 }
 
-GokuNube::~GokuNube() {
-}
-
+GokuNube::~GokuNube() {}

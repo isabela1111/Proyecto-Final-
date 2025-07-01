@@ -89,17 +89,12 @@ void Nivel3::perderVida() {
 }
 
 void Nivel3::mostrarGameOver() {
-    // Detener timers
     timerObstaculos->stop();
     timerDistancia->stop();
     timerScroll->stop();
-
-    // Eliminar solo al jugador (opcional, si no quieres que se vea en el fondo)
     escena->removeItem(goku);
     delete goku;
     goku = nullptr;
-
-    // Eliminar enemigos restantes
     QList<QGraphicsItem*> items = escena->items();
     for (QGraphicsItem* item : items) {
         AvionEnemigo* avion = dynamic_cast<AvionEnemigo*>(item);
@@ -108,17 +103,15 @@ void Nivel3::mostrarGameOver() {
             delete avion;
         }
     }
-
-    // Mostrar pantalla de Game Over
     QPixmap gameOverPixmap(Recursos::fondoGameOverGoku);
     QGraphicsPixmapItem* gameOver = escena->addPixmap(gameOverPixmap.scaled(800, 600));
-    gameOver->setZValue(10);  // Asegura que esté al frente
+    gameOver->setZValue(10);
     gameOver->setPos(vista->mapToScene(0, 0));
-
     terminado = true;
 }
 
 void Nivel3::actualizarScroll() {
+    if (terminado || goku == nullptr) return;
     vista->centerOn(goku);
     QPointF vistaCentro = vista->mapToScene(vista->viewport()->rect().topLeft());
     textoDistancia->setPos(vistaCentro.x() + 10, vistaCentro.y() + 10);
@@ -126,6 +119,7 @@ void Nivel3::actualizarScroll() {
         barrasVida[i]->setPos(vistaCentro.x() + 10 + i * 30, vistaCentro.y() + 40);
     }
 }
+
 
 void Nivel3::actualizar() {
 }

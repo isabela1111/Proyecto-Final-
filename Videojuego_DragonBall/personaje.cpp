@@ -2,12 +2,13 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include "nivel1.h"
+
 Personaje::Personaje(QGraphicsView* vista, QObject* parent)
-    : QObject(parent), QGraphicsPixmapItem()
+    : QObject(parent), QGraphicsPixmapItem(), vista(vista)
 {
     posX = 0;
     posY = 0;
-    velocidad = 0;
+    velocidad = 5;
     spriteX = 0;
     spriteY = 0;
     spriteAncho = 60;
@@ -41,8 +42,9 @@ int Personaje::getVida() const {
 }
 
 void Personaje::keyPressEvent(QKeyEvent* event) {
-    Nivel1* nivel = qobject_cast<Nivel1*>(parent());
-    if (nivel && !nivel->juegoIniciado && !nivel->gameOverShown) {
+    Nivel1* nivel = qobject_cast<Nivel1*>(scene() ? scene()->parent() : nullptr);
+    if (!nivel) return;
+    if (!nivel->juegoIniciado && !nivel->gameOverShown) {
         if (event->key() == Qt::Key_E) {
             nivel->comenzarJuego();
             if (nivel->textoInicio) {
@@ -55,12 +57,12 @@ void Personaje::keyPressEvent(QKeyEvent* event) {
     }
     switch (event->key()) {
     case Qt::Key_Up:
-        if (y() > 0) mover();
+        if (y() > 0)
+            mover();
         break;
     case Qt::Key_Down:
-        if (y() + boundingRect().height() < limites.height()) {
+        if (y() + boundingRect().height() < limites.height())
             moveBy(0, velocidad);
-        }
         break;
     case Qt::Key_Space:
         saltar();
@@ -69,5 +71,3 @@ void Personaje::keyPressEvent(QKeyEvent* event) {
         break;
     }
 }
-
-

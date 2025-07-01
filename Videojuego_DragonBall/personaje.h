@@ -40,6 +40,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent* event) override;
     QSize limites;
+    QGraphicsView* vista;
 };
 
 #endif // PERSONAJE_H
