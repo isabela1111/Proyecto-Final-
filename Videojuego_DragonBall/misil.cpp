@@ -1,14 +1,14 @@
 #include "misil.h"
-#include "gokunube.h"
 #include "recursos.h"
+#include "gokunube.h"
 #include <QGraphicsScene>
 
 Misil::Misil(GokuNube* goku, QGraphicsItem* parent)
-    : QObject(), QGraphicsPixmapItem(parent), goku(goku), velocidad(6)
+    : QObject(), QGraphicsPixmapItem(parent), goku(goku)
 {
-    hojaSprites.load(Recursos::misilSprite);  
-    setPixmap(hojaSprites.copy(0, 0, 24, 10)); // Ajusta el tamaño al sprite real
-    setZValue(1);
+    sprite.load(Recursos::misilSprite);
+    setPixmap(sprite);
+    setZValue(2);
 
     timerMovimiento = new QTimer(this);
     connect(timerMovimiento, &QTimer::timeout, this, &Misil::mover);
@@ -16,10 +16,15 @@ Misil::Misil(GokuNube* goku, QGraphicsItem* parent)
 }
 
 void Misil::mover() {
-    setX(x() - velocidad);
+    setX(x() - 7);
 
-    if (goku && collidesWithItem(goku)) {
-        emit colisionaConGoku();
+    if (!scene() || !goku || !goku->scene()) {
+        deleteLater();
+        return;
+    }
+
+    if (collidesWithItem(goku)) {
+        goku->recibirDanio(1);
         scene()->removeItem(this);
         deleteLater();
         return;
