@@ -6,20 +6,28 @@
 #include <QRandomGenerator>
 #include <QFont>
 #include <QGraphicsPixmapItem>
+#include <QDebug>
 
 Nivel3::Nivel3(QGraphicsView* vista, QObject* parent)
-    : Nivel(parent), vista(vista), distanciaRecorrida(0), vidas(5)
-{
+    : Nivel(parent), vista(vista), distanciaRecorrida(0), vidas(5) {
     escena = new QGraphicsScene();
     escena->setSceneRect(0, 0, 8000, 600);
     fondo.load(Recursos::fondoNivel3);
     terminado = false;
+
+    efectoGolpe.setSource(QUrl::fromLocalFile(Recursos::sonidoGolpe));
+    efectoGolpe.setVolume(1.0);
+}
+
+Nivel3::~Nivel3() {
+    if (timerObstaculos) { timerObstaculos->stop(); delete timerObstaculos; timerObstaculos = nullptr; }
+    if (timerDistancia) { timerDistancia->stop(); delete timerDistancia; timerDistancia = nullptr; }
+    if (timerScroll)    { timerScroll->stop(); delete timerScroll; timerScroll = nullptr; }
 }
 
 void Nivel3::iniciarnivel() {
     fondoItem = new QGraphicsPixmapItem(fondo.scaled(8000, 600));
     escena->addItem(fondoItem);
-
     goku = new GokuNube(vista);
     escena->addItem(goku);
     goku->setPos(100, 300);
@@ -39,21 +47,17 @@ void Nivel3::iniciarnivel() {
         escena->addItem(barra);
         barrasVida.append(barra);
     }
-
     timerObstaculos = new QTimer(this);
     connect(timerObstaculos, &QTimer::timeout, this, &Nivel3::generarObstaculo);
     timerObstaculos->start(1500);
-
     timerDistancia = new QTimer(this);
     connect(timerDistancia, &QTimer::timeout, this, &Nivel3::actualizarDistancia);
     timerDistancia->start(1000);
-
-    vista->setScene(escena);
-    vista->centerOn(goku);
-
     timerScroll = new QTimer(this);
     connect(timerScroll, &QTimer::timeout, this, &Nivel3::actualizarScroll);
     timerScroll->start(30);
+    vista->setScene(escena);
+    vista->centerOn(goku);
 }
 
 void Nivel3::generarObstaculo() {
@@ -64,68 +68,74 @@ void Nivel3::generarObstaculo() {
 }
 
 void Nivel3::actualizarDistancia() {
+    if (terminado || !goku) return;
     distanciaRecorrida += 10;
     textoDistancia->setPlainText("Distancia: " + QString::number(distanciaRecorrida) + " m");
-
     if (distanciaRecorrida >= 1000) {
-        QGraphicsTextItem* victoria = escena->addText("¡Llegaste a la base!");
+        QGraphicsTextItem* victoria = escena->addText("\u00a1Llegaste a la base!");
         victoria->setDefaultTextColor(Qt::yellow);
         victoria->setFont(QFont("Arial", 30, QFont::Bold));
         victoria->setPos(goku->x() - 200, 250);
         terminado = true;
+        if (timerObstaculos) timerObstaculos->stop();
+        if (timerDistancia) timerDistancia->stop();
+        if (timerScroll) timerScroll->stop();
     }
 }
 
 void Nivel3::perderVida() {
+    if (terminado) return;
+    efectoGolpe.play();
     if (vidas > 0) {
         vidas--;
         QGraphicsRectItem* barra = barrasVida.takeLast();
         escena->removeItem(barra);
         delete barra;
     }
-    if (vidas <= 0) {
+    if (vidas <= 0 && !terminado) {
         mostrarGameOver();
     }
 }
 
 void Nivel3::mostrarGameOver() {
-    // Detener timers
-    timerObstaculos->stop();
-    timerDistancia->stop();
-    timerScroll->stop();
-
-    // Eliminar solo al jugador (opcional, si no quieres que se vea en el fondo)
-    escena->removeItem(goku);
-    delete goku;
-    goku = nullptr;
-
-    // Eliminar enemigos restantes
+    if (terminado) return;
+    terminado = true;
+    if (timerObstaculos) { timerObstaculos->stop(); delete timerObstaculos; timerObstaculos = nullptr; }
+    if (timerDistancia)   { timerDistancia->stop(); delete timerDistancia; timerDistancia = nullptr; }
+    if (timerScroll)      { timerScroll->stop(); delete timerScroll; timerScroll = nullptr; }
     QList<QGraphicsItem*> items = escena->items();
     for (QGraphicsItem* item : items) {
         AvionEnemigo* avion = dynamic_cast<AvionEnemigo*>(item);
         if (avion) {
-            escena->removeItem(avion);
-            delete avion;
+            avion->scene()->removeItem(avion);
+            avion->deleteLater();
         }
     }
-
-    // Mostrar pantalla de Game Over
+    if (goku) {
+        goku->blockSignals(true);
+        goku->setEnabled(false);
+        goku->setVisible(false);
+        escena->removeItem(goku);
+        goku->deleteLater();
+        goku = nullptr;
+    }
     QPixmap gameOverPixmap(Recursos::fondoGameOverGoku);
+    if (gameOverPixmap.isNull()) {
+        qDebug() << "Error: no se pudo cargar fondoGameOverGoku";
+        return;
+    }
     QGraphicsPixmapItem* gameOver = escena->addPixmap(gameOverPixmap.scaled(800, 600));
-    gameOver->setZValue(10);  // Asegura que esté al frente
-    gameOver->setPos(vista->mapToScene(0, 0));
-
-    terminado = true;
+    gameOver->setZValue(100);
+    QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
+    gameOver->setPos(centroVista.x() - 400, centroVista.y() - 300);
 }
 
 void Nivel3::actualizarScroll() {
+    if (terminado || !goku) return;
     vista->centerOn(goku);
     QPointF vistaCentro = vista->mapToScene(vista->viewport()->rect().topLeft());
     textoDistancia->setPos(vistaCentro.x() + 10, vistaCentro.y() + 10);
     for (int i = 0; i < barrasVida.size(); ++i) {
         barrasVida[i]->setPos(vistaCentro.x() + 10 + i * 30, vistaCentro.y() + 40);
     }
-}
-
-void Nivel3::actualizar() {
 }

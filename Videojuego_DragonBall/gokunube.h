@@ -1,13 +1,14 @@
 #ifndef GOKUNUBE_H
 #define GOKUNUBE_H
 
+#include "personaje.h"
+
 #include <QTimer>
 #include <QKeyEvent>
 #include <QObject>
-#include <QGraphicsPixmapItem>
 #include <QGraphicsView>
 
-class GokuNube : public QObject, public QGraphicsPixmapItem {
+class GokuNube : public Personaje {
     Q_OBJECT
 public:
     GokuNube(QGraphicsView* vista, QObject* parent = nullptr);
@@ -20,12 +21,9 @@ private slots:
     void cambiarSprite();
 
 private:
-    QGraphicsView* vista;
-    QPixmap hojaSprites;
     QTimer* timerAnimacion;
     QTimer* timerMovimiento;
     int frameActual;
-    int velocidad;
 
     void moverAutomatico();
 };

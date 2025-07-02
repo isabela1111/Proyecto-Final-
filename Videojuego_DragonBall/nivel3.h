@@ -8,6 +8,7 @@
 #include <QGraphicsTextItem>
 #include <QGraphicsRectItem>
 #include <QVector>
+#include <QSoundEffect>
 
 class Nivel3 : public Nivel
 {
@@ -15,7 +16,7 @@ class Nivel3 : public Nivel
 public:
     Nivel3(QGraphicsView* vista, QObject* parent = nullptr);
     void iniciarnivel() override;
-    void actualizar() override;
+    ~Nivel3();
 
 private:
     QGraphicsView* vista;
@@ -24,8 +25,7 @@ private:
     int vidas;
     QGraphicsTextItem* textoDistancia;
     QGraphicsPixmapItem* fondoItem;
-
-
+    QSoundEffect efectoGolpe;
     QVector<QGraphicsRectItem*> barrasVida;
 
     QTimer* timerObstaculos;
@@ -37,6 +37,7 @@ private:
     void perderVida();
     void mostrarGameOver();
     void actualizarScroll();
+
 };
 
 #endif // NIVEL3_H

@@ -2,12 +2,13 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include "nivel1.h"
+
 Personaje::Personaje(QGraphicsView* vista, QObject* parent)
-    : QObject(parent), QGraphicsPixmapItem()
+    : QObject(parent), QGraphicsPixmapItem(), vista(vista)
 {
     posX = 0;
     posY = 0;
-    velocidad = 0;
+    velocidad = 5;
     spriteX = 0;
     spriteY = 0;
     spriteAncho = 60;
@@ -69,5 +70,4 @@ void Personaje::keyPressEvent(QKeyEvent* event) {
         break;
     }
 }
-
 

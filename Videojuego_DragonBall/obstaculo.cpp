@@ -3,8 +3,7 @@
 #include "taopaipai.h"
 
 Obstaculo::Obstaculo(Nivel1* nivel, QGraphicsItem* parent)
-    : QObject(), QGraphicsPixmapItem(parent), nivel(nivel)
-{
+    : QObject(), QGraphicsPixmapItem(parent), nivel(nivel){
     timerMovimiento = new QTimer(this);
     connect(timerMovimiento, &QTimer::timeout, this, [=]() {
         mover();
@@ -13,8 +12,7 @@ Obstaculo::Obstaculo(Nivel1* nivel, QGraphicsItem* parent)
     timerMovimiento->start(30);
 }
 
-void Obstaculo::mover()
-{
+void Obstaculo::mover(){
     moveBy(0, 5);  // Baja 5 píxeles
     if (y() > 600) {
         scene()->removeItem(this);
@@ -22,8 +20,7 @@ void Obstaculo::mover()
     }
 }
 
-void Obstaculo::verificarColision()
-{
+void Obstaculo::verificarColision(){
     QList<QGraphicsItem*> colisiones = collidingItems();
     for (QGraphicsItem* item : colisiones) {
         if (dynamic_cast<TaoPaiPai*>(item)) {
