@@ -2,7 +2,8 @@
 #include "recursos.h"
 
 GokuNube::GokuNube(QGraphicsView* vista, QObject* parent)
-    : Personaje(vista, parent), frameActual(0){
+    : Personaje(vista, parent), frameActual(0)
+{
     velocidad = 10;
     hojaSprites.load(Recursos::gokuNubeSprite);
     setPixmap(hojaSprites.copy(0, 0, 35, 44));
