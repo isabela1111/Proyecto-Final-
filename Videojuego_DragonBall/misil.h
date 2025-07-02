@@ -12,17 +12,14 @@ class Misil : public QObject, public QGraphicsPixmapItem {
 public:
     Misil(GokuNube* goku, QGraphicsItem* parent = nullptr);
 
-signals:
-    void colisionaConGoku();
-
 private slots:
     void mover();
 
 private:
-    QPixmap hojaSprites;
     QTimer* timerMovimiento;
-    int velocidad;
+    QPixmap sprite;
     GokuNube* goku;
 };
 
 #endif // MISIL_H
+
