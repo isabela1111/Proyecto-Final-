@@ -6,8 +6,7 @@
 AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
     : QObject(), QGraphicsPixmapItem(parent),
     frameActual(0), totalFrames(5),
-    spriteAncho(228 / 5), spriteAlto(43), goku(goku)
-{
+    spriteAncho(228 / 5), spriteAlto(43), goku(goku){
     if (rand() % 2 == 0)
         hojaSprites.load(Recursos::avionEnemigo1Sprite);
     else
@@ -27,20 +26,23 @@ AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
 
 void AvionEnemigo::mover() {
     setX(x() - 4);
-
-    if (collidesWithItem(goku)) {
-        emit colisionaConGoku();
-        scene()->removeItem(this);
+    if (!scene() || !goku || !goku->scene()) {
         deleteLater();
         return;
     }
-
+    if (collidesWithItem(goku)) {
+        emit colisionaConGoku();
+        if (scene())
+            scene()->removeItem(this);
+        deleteLater();
+        return;
+    }
     if (x() + boundingRect().width() < 0) {
-        scene()->removeItem(this);
+        if (scene())
+            scene()->removeItem(this);
         deleteLater();
     }
 }
-
 
 void AvionEnemigo::animar() {
     int x = (frameActual % totalFrames) * spriteAncho;

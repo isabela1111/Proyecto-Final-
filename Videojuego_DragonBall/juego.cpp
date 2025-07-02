@@ -51,7 +51,6 @@ void Juego::actualizar() {
     if (!enEjecucion || !nivelActual) return;
 
     nivelActual->actualizar();
-
     if (nivelActual->terminado) {
         if (dynamic_cast<Nivel1*>(nivelActual)) {
             cambiarNivel(new Nivel2());
