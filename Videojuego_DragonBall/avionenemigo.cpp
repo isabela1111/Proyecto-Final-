@@ -1,12 +1,16 @@
 #include "avionenemigo.h"
 #include "recursos.h"
 #include "gokunube.h"
+#include "misil.h"
 #include <QGraphicsScene>
+#include <QRandomGenerator>
 
 AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
     : QObject(), QGraphicsPixmapItem(parent),
-    frameActual(0), totalFrames(5),
-    spriteAncho(228 / 5), spriteAlto(43), goku(goku){
+      frameActual(0), totalFrames(5),
+      spriteAncho(228 / 5), spriteAlto(43),
+      goku(goku), misilesDisparados(0)
+{
     if (rand() % 2 == 0)
         hojaSprites.load(Recursos::avionEnemigo1Sprite);
     else
@@ -15,6 +19,8 @@ AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
     setPixmap(hojaSprites.copy(0, 0, spriteAncho, spriteAlto));
     setZValue(1);
 
+    esEstacionario = QRandomGenerator::global()->bounded(2) == 0;
+
     timerMovimiento = new QTimer(this);
     connect(timerMovimiento, &QTimer::timeout, this, &AvionEnemigo::mover);
     timerMovimiento->start(30);
@@ -22,14 +28,23 @@ AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
     timerAnimacion = new QTimer(this);
     connect(timerAnimacion, &QTimer::timeout, this, &AvionEnemigo::animar);
     timerAnimacion->start(150);
+
+    if (esEstacionario) {
+        timerDisparo = new QTimer(this);
+        connect(timerDisparo, &QTimer::timeout, this, &AvionEnemigo::disparar);
+        timerDisparo->start(1200);
+    }
 }
 
 void AvionEnemigo::mover() {
-    setX(x() - 4);
     if (!scene() || !goku || !goku->scene()) {
         deleteLater();
         return;
     }
+
+    if (!esEstacionario || haTerminadoDisparos)
+        setX(x() - 4);
+
     if (collidesWithItem(goku)) {
         emit colisionaConGoku();
         if (scene())
@@ -37,6 +52,7 @@ void AvionEnemigo::mover() {
         deleteLater();
         return;
     }
+
     if (x() + boundingRect().width() < 0) {
         if (scene())
             scene()->removeItem(this);
@@ -48,4 +64,17 @@ void AvionEnemigo::animar() {
     int x = (frameActual % totalFrames) * spriteAncho;
     setPixmap(hojaSprites.copy(x, 0, spriteAncho, spriteAlto));
     frameActual++;
+}
+
+void AvionEnemigo::disparar() {
+    if (!scene() || misilesDisparados >= maxMisiles) {
+        haTerminadoDisparos = true;
+        timerDisparo->stop();
+        return;
+    }
+
+    Misil* misil = new Misil(goku);
+    misil->setPos(x(), y() + boundingRect().height() / 2 - 10);
+    emit disparoMisil(misil);
+    misilesDisparados++;
 }
