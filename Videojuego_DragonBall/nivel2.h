@@ -2,6 +2,7 @@
 #define NIVEL2_H
 
 #include "nivel.h"
+
 #include "goku.h"
 #include "taopaipaijefe.h"
 #include <QGraphicsRectItem>

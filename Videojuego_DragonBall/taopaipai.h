@@ -2,6 +2,7 @@
 #define TAOPAIPAI_H
 
 #include "personaje.h"
+
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 #include <QSoundEffect>

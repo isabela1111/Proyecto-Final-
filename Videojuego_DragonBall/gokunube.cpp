@@ -54,3 +54,7 @@ GokuNube::~GokuNube() {
         timerMovimiento = nullptr;
     }
 }
+
+void GokuNube::recibirDanio(int cantidad) {
+    emit gokuRecibeDanio();
+}

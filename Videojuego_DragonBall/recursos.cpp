@@ -13,7 +13,7 @@ const QString Recursos::fondoWinTao = ":/Recursos/fondos/fondoWinTao.jpg";
 
 
 const QString Recursos::gokuSprite = ":/Recursos/Sprites/goku.png";
-const QString Recursos::misilSprite = ":/Recursos/Sprites/misilenemigo.png";
+const QString Recursos::misilSprite = ":/Recursos/Sprites/Misil.PNG";
 const QString Recursos::TaoRunSprite = ":/Recursos/Sprites/Taorun.PNG";
 const QString Recursos::TaoJumpSprite = ":/Recursos/Sprites/Taojump.PNG";
 const QString Recursos::TaoCaidoSprite = ":/Recursos/Sprites/Taocaido.PNG";

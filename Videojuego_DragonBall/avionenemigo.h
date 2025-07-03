@@ -1,14 +1,14 @@
 #ifndef AVIONENEMIGO_H
 #define AVIONENEMIGO_H
 
+#include "obstaculo.h"
 #include <QObject>
-#include <QGraphicsPixmapItem>
 #include <QTimer>
 
 class GokuNube;
 class Misil;
 
-class AvionEnemigo : public QObject, public QGraphicsPixmapItem {
+class AvionEnemigo : public Obstaculo {
     Q_OBJECT
 public:
     AvionEnemigo(GokuNube* goku, QGraphicsItem* parent = nullptr);
@@ -41,4 +41,3 @@ private:
 };
 
 #endif // AVIONENEMIGO_H
-

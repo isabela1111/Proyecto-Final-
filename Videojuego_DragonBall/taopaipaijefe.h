@@ -2,6 +2,7 @@
 #define TAOPAIPAIJEFE_H
 
 #include "personaje.h"
+
 #include "granada.h"
 
 #include <QTimer>

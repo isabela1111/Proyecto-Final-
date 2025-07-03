@@ -23,7 +23,8 @@ SOURCES += \
     recursos.cpp \
     taopaipai.cpp \
     taopaipaijefe.cpp \
-    granada.cpp
+    granada.cpp \
+    misil.cpp
 
 HEADERS += \
     avionenemigo.h \
@@ -41,7 +42,8 @@ HEADERS += \
     recursos.h \
     taopaipai.h \
     taopaipaijefe.h \
-    granada.h
+    granada.h \
+    misil.h \
 
 FORMS += \
     mainwindow.ui
