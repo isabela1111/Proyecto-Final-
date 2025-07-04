@@ -25,6 +25,6 @@
         <file>Recursos/Sprites/GokuNube1.PNG</file>
         <file>Recursos/Sprites/avionEnemigo1.PNG</file>
         <file>Recursos/Sprites/avionEnemigo2.PNG</file>
-        <file>Recursos/Sprites/misilenemigo.png</file>
+        <file>Recursos/Sprites/Misil.PNG</file>
     </qresource>
 </RCC>

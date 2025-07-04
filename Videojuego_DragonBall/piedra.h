@@ -2,6 +2,7 @@
 #define PIEDRA_H
 
 #include "obstaculo.h"
+
 #include <QTimer>
 #include <QPixmap>
 

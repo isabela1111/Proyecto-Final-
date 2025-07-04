@@ -2,14 +2,15 @@
 #include "recursos.h"
 #include "gokunube.h"
 #include "misil.h"
+
 #include <QGraphicsScene>
 #include <QRandomGenerator>
 
 AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
-    : QObject(), QGraphicsPixmapItem(parent),
-      frameActual(0), totalFrames(5),
-      spriteAncho(228 / 5), spriteAlto(43),
-      goku(goku), misilesDisparados(0)
+    : Obstaculo(nullptr, parent),
+    frameActual(0), totalFrames(5),
+    spriteAncho(228 / 5), spriteAlto(43),
+    goku(goku), misilesDisparados(0)
 {
     if (rand() % 2 == 0)
         hojaSprites.load(Recursos::avionEnemigo1Sprite);
@@ -20,6 +21,7 @@ AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
     setZValue(1);
 
     esEstacionario = QRandomGenerator::global()->bounded(2) == 0;
+
 
     timerMovimiento = new QTimer(this);
     connect(timerMovimiento, &QTimer::timeout, this, &AvionEnemigo::mover);
@@ -32,7 +34,7 @@ AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
     if (esEstacionario) {
         timerDisparo = new QTimer(this);
         connect(timerDisparo, &QTimer::timeout, this, &AvionEnemigo::disparar);
-        timerDisparo->start(1200);
+        timerDisparo->start(800);
     }
 }
 
@@ -41,10 +43,8 @@ void AvionEnemigo::mover() {
         deleteLater();
         return;
     }
-
     if (!esEstacionario || haTerminadoDisparos)
         setX(x() - 4);
-
     if (collidesWithItem(goku)) {
         emit colisionaConGoku();
         if (scene())
@@ -52,7 +52,6 @@ void AvionEnemigo::mover() {
         deleteLater();
         return;
     }
-
     if (x() + boundingRect().width() < 0) {
         if (scene())
             scene()->removeItem(this);
@@ -69,11 +68,10 @@ void AvionEnemigo::animar() {
 void AvionEnemigo::disparar() {
     if (!scene() || misilesDisparados >= maxMisiles) {
         haTerminadoDisparos = true;
-        timerDisparo->stop();
+        if (timerDisparo) timerDisparo->stop();
         return;
     }
-
-    Misil* misil = new Misil(goku);
+    Misil* misil = new Misil(goku, this);
     misil->setPos(x(), y() + boundingRect().height() / 2 - 10);
     emit disparoMisil(misil);
     misilesDisparados++;
