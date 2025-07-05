@@ -10,7 +10,6 @@ SOURCES += \
     avionenemigo.cpp \
     goku.cpp \
     gokunube.cpp \
-    juego.cpp \
     main.cpp \
     mainwindow.cpp \
     nivel.cpp \
@@ -30,7 +29,6 @@ HEADERS += \
     avionenemigo.h \
     goku.h \
     gokunube.h \
-    juego.h \
     mainwindow.h \
     nivel.h \
     nivel1.h \

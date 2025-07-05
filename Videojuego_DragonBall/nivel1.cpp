@@ -2,6 +2,7 @@
 #include "recursos.h"
 #include "piedra.h"
 #include <QGraphicsPixmapItem>
+#include <QGraphicsProxyWidget>
 #include <QTimer>
 #include <QDebug>
 #include <QFont>
@@ -197,6 +198,19 @@ void Nivel1::mostrarPantallaGameOver() {
     }
     QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoGameOver.scaled(800, 600));
     escena->addItem(fondoItem);
+    // Botón volver al menú
+    QPushButton* botonMenu = new QPushButton("Volver al menú");
+    botonMenu->setFixedSize(200, 50);
+    botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
+    QGraphicsProxyWidget* proxy = escena->addWidget(botonMenu);
+    proxy->setZValue(101);
+    QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
+    proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
+
+    connect(botonMenu, &QPushButton::clicked, [this]() {
+        emit volverAlMenu();
+        vista->close();
+    });
 }
 
 void Nivel1::mostrarPantallaVictoria() {
@@ -209,7 +223,22 @@ void Nivel1::mostrarPantallaVictoria() {
     }
     QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoWin.scaled(800, 600));
     escena->addItem(fondoItem);
+
+    QPushButton* botonMenu = new QPushButton("Volver al menú");
+    botonMenu->setFixedSize(200, 50);
+    botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
+    QGraphicsProxyWidget* proxy = escena->addWidget(botonMenu);
+    proxy->setZValue(101);
+
+    QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
+    proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
+
+    connect(botonMenu, &QPushButton::clicked, [this]() {
+        emit volverAlMenu();
+        vista->close();
+    });
 }
+
 
 void Nivel1::crearBarrasVida() {
     for (QGraphicsRectItem* barra : barrasVida) {

@@ -1,4 +1,3 @@
-#include "juego.h"
 #include "mainwindow.h"
 
 #include "ui_mainwindow.h"
@@ -6,8 +5,6 @@
 #include <QPushButton>
 #include <QImage>
 #include <QFont>
-
-Juego* juegoGlobal = nullptr;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -75,7 +72,6 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-
 void MainWindow::iniciarNivel1() {
     if (reproductorIntro && reproductorIntro->isPlaying())
         reproductorIntro->stop();
@@ -87,7 +83,6 @@ void MainWindow::iniciarNivel1() {
     vista->setFixedSize(800, 600);
     vista->show();
 }
-
 
 void MainWindow::iniciarNivel2() {
     if (reproductorIntro && reproductorIntro->isPlaying())

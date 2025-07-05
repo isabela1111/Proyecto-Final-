@@ -9,7 +9,6 @@
 #include "nivel3.h"
 #include <QMediaPlayer>
 #include <QAudioOutput>
-#include "juego.h"
 #include "recursos.h"
 
 QT_BEGIN_NAMESPACE
