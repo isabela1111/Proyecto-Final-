@@ -16,7 +16,6 @@ Nivel3::Nivel3(QGraphicsView* vista, QObject* parent)
     escena->setSceneRect(0, 0, 8000, 600);
     fondo.load(Recursos::fondoNivel3);
     terminado = false;
-
     efectoGolpe.setSource(QUrl::fromLocalFile(Recursos::sonidoGolpe));
     efectoGolpe.setVolume(1.0);
 }
@@ -65,13 +64,28 @@ void Nivel3::iniciarnivel() {
     vista->centerOn(goku);
 }
 
+
 void Nivel3::generarObstaculo() {
+    if (!goku || terminado) return;
+    int altoEscena = static_cast<int>(escena->sceneRect().height());
+    int altoAvion = 43;
+    int margen = 20;
+    int y = QRandomGenerator::global()->bounded(margen, altoEscena - altoAvion - margen);
     AvionEnemigo* avion = new AvionEnemigo(goku);
+    float dificultad = distanciaRecorrida / 300.0;
+    if (dificultad > 1.5) dificultad = 1.5;
+    avion->setVelocidad(2.5 + dificultad * 1.2);
+    avion->setMaxMisiles(1 + dificultad * 2);
     escena->addItem(avion);
-    avion->setPos(goku->x() + 800, QRandomGenerator::global()->bounded(0, 550));
+    avion->setPos(goku->x() + 800, y);
+    // Conexiones
     connect(avion, &AvionEnemigo::colisionaConGoku, this, &Nivel3::perderVida);
     connect(avion, &AvionEnemigo::disparoMisil, escena, &QGraphicsScene::addItem);
+    int nuevaFrecuencia = 1500 - (distanciaRecorrida / 10);
+    if (nuevaFrecuencia < 500) nuevaFrecuencia = 500;
+    timerObstaculos->start(nuevaFrecuencia);
 }
+
 
 void Nivel3::actualizarDistancia() {
     if (terminado || !goku) return;
