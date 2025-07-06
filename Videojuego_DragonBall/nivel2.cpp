@@ -1,6 +1,7 @@
 #include "nivel2.h"
 #include <QGraphicsPixmapItem>
 #include <QDebug>
+#include <QGraphicsProxyWidget>
 #include "recursos.h"
 
 Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
@@ -100,7 +101,23 @@ void Nivel2::mostrarPantallaGameOver() {
         qDebug() << "No se pudo cargar imagen de derrota.";
         return;
     }
-    escena->addItem(new QGraphicsPixmapItem(fondoGameOver.scaled(800, 600)));
+    QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoGameOver.scaled(800, 600));
+    fondoItem->setZValue(0);
+    escena->addItem(fondoItem);
+    fondoItem->setPos(0, 0);
+    // Boton Volver al menu
+    QPushButton* botonMenu = new QPushButton("Volver al menú");
+    botonMenu->setFixedSize(200, 50);
+    botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
+    QGraphicsProxyWidget* proxy = escena->addWidget(botonMenu);
+    proxy->setZValue(1);
+    QTimer::singleShot(30, this, [this, proxy]() {
+        QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
+        proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
+    });
+    connect(botonMenu, &QPushButton::clicked, [this]() {
+        emit volverAlMenu();
+    });
 }
 
 void Nivel2::mostrarPantallaVictoria() {
@@ -110,5 +127,22 @@ void Nivel2::mostrarPantallaVictoria() {
         qDebug() << "No se pudo cargar imagen de victoria.";
         return;
     }
-    escena->addItem(new QGraphicsPixmapItem(fondoVictoria.scaled(800, 600)));
+    QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoVictoria.scaled(800, 600));
+    fondoItem->setZValue(0);
+    escena->addItem(fondoItem);
+    fondoItem->setPos(0, 0);
+    // Boton Volver al menu
+    QPushButton* botonMenu = new QPushButton("Volver al menú");
+    botonMenu->setFixedSize(200, 50);
+    botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
+    QGraphicsProxyWidget* proxy = escena->addWidget(botonMenu);
+    proxy->setZValue(1);
+    QTimer::singleShot(30, this, [this, proxy]() {
+        QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
+        proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
+    });
+    connect(botonMenu, &QPushButton::clicked, [this]() {
+        emit volverAlMenu();
+    });
 }
+

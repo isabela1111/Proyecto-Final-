@@ -4,7 +4,9 @@
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QList>
+#include <QPushButton>
 #include "personaje.h"
 
 class Nivel : public QObject {
@@ -13,15 +15,23 @@ public:
     explicit Nivel(QObject* parent = nullptr);
 
     QPixmap fondo;
-    bool terminado;
+    bool terminado = false;
     QList<Personaje*> personajes;
-    QGraphicsScene* escena;
-    QGraphicsView* vista;
+    QGraphicsScene* escena = nullptr;
+    QGraphicsView* vista = nullptr;
 
     virtual void iniciarnivel();
     virtual void actualizar();
     virtual void terminar();
     virtual void mostrarCinematicaFinal();
+
+protected:
+    void mostrarPantallaFinal(const QPixmap& fondo, bool victoria);
+
+signals:
+    void volverAlMenu();
+    void nivelTerminado();
+
 };
 
 #endif // NIVEL_H

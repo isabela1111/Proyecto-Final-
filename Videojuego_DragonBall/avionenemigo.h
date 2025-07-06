@@ -12,6 +12,8 @@ class AvionEnemigo : public Obstaculo {
     Q_OBJECT
 public:
     AvionEnemigo(GokuNube* goku, QGraphicsItem* parent = nullptr);
+    void setVelocidad(float v);
+    void setMaxMisiles(int m);
 
 signals:
     void colisionaConGoku();
@@ -34,9 +36,17 @@ private:
     int spriteAlto;
     GokuNube* goku;
 
+    float baseY;
+    float amplitud;
+    float omega;
+    float tiempo;
+    float velocidadX;
+
+    float velocidad = 2.0;
+    int maxMisiles = 1;
+
     bool esEstacionario;
     int misilesDisparados;
-    const int maxMisiles = 2;
     bool haTerminadoDisparos = false;
 };
 
