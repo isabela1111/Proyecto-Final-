@@ -12,13 +12,14 @@ TaoPaiPaiJefe::TaoPaiPaiJefe(QGraphicsView* vista, QObject* parent)
     velocidad = 3;
 
     hojaSprites.load(Recursos::TaoenemigoSprite);
+    
     spriteX = 0;
-    spriteY = 0;
-    spriteAncho = 60;
-    spriteAlto = 60;
+    spriteY = 1;  // fila 1, que parece ser la correcta
+    spriteAncho = 140; // ancho más grande para que no se corte
+    spriteAlto = 160;
 
-    setPixmap(hojaSprites.copy(spriteX, spriteY, spriteAncho, spriteAlto));
-    setPos(600, 400);
+    setPixmap(hojaSprites.copy(spriteX * spriteAncho, spriteY * spriteAlto, spriteAncho, spriteAlto));
+    setPos(600, 400 - spriteAlto + 60); // mejor alineación con el suelo
 
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
@@ -59,7 +60,6 @@ void TaoPaiPaiJefe::setObjetivo(Personaje* objetivo) {
 }
 
 void TaoPaiPaiJefe::mover() {
-    // Movimiento simple lateral hacia Goku (aleatorio o alternante si se prefiere)
     if (!objetivoJugador) return;
 
     if (x() > objetivoJugador->x()) {
@@ -67,9 +67,7 @@ void TaoPaiPaiJefe::mover() {
     } else if (x() < objetivoJugador->x()) {
         moveBy(velocidad, 0);
     }
-    
-    spriteX = (spriteX + 1) % 4;
-    setPixmap(hojaSprites.copy(spriteX * spriteAncho, 0, spriteAncho, spriteAlto));
+
+    spriteX = (spriteX + 1) % 3;
+    setPixmap(hojaSprites.copy(spriteX * spriteAncho, spriteY * spriteAlto, spriteAncho, spriteAlto));
 }
-
-
