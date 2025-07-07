@@ -2,6 +2,7 @@
 
 Recursos::Recursos() {}
 
+//Fondos
 const QString Recursos::fondoMenu = ":/Recursos/fondos/FondoMenu.jpg";
 const QString Recursos::fondoNivel1 = ":/Recursos/fondos/fondo_nivel1.PNG";
 const QString Recursos::fondoNivel2 = ":/Recursos/fondos/fondo_nivel2.PNG";
@@ -12,19 +13,36 @@ const QString Recursos::fondoWinGoku = ":/Recursos/fondos/fondoWinGoku.jpg";
 const QString Recursos::fondoWinTao = ":/Recursos/fondos/fondoWinTao.jpg";
 
 
-const QString Recursos::gokuSprite = ":/Recursos/Sprites/goku.png";
-const QString Recursos::misilSprite = ":/Recursos/Sprites/Misil.PNG";
+//Sprites nivel 1
 const QString Recursos::TaoRunSprite = ":/Recursos/Sprites/Taorun.PNG";
 const QString Recursos::TaoJumpSprite = ":/Recursos/Sprites/Taojump.PNG";
 const QString Recursos::TaoCaidoSprite = ":/Recursos/Sprites/Taocaido.PNG";
 const QString Recursos::RocaSprite =  ":/Recursos/Sprites/roca.png";
-const QString Recursos::granadaSprite = ":/Recursos/Sprites/granada.png";
-const QString Recursos::TaoenemigoSprite = ":/Recursos/Sprites/taopaipaienemie.png";
+
+
+//Sprites nivel 2
+const QString Recursos::gokuRunA = ":/Recursos/Sprites/gokuRunA.PNG";
+const QString Recursos::gokuRunD = ":/Recursos/Sprites/gokuRunD.PNG";
+const QString Recursos::gokuAtaque1 = ":/Recursos/Sprites/gokuAtaque1.PNG";
+const QString Recursos::gokuAtaque2 = ":/Recursos/Sprites/gokuAtaque2.PNG";
+const QString Recursos::gokuJump = ":/Recursos/Sprites/gokuJump.PNG";
+const QString Recursos::gokuCaido = ":/Recursos/Sprites/gokuCaido.PNG";
+const QString Recursos::granadaSprite = ":/Recursos/Sprites/Granadaa.png";
+const QString Recursos::explosionSprite = ":/Recursos/Sprites/Explosion.PNG";
+const QString Recursos::TaoAtaqueA = ":/Recursos/Sprites/TaoAtaqueA.PNG";
+const QString Recursos::TaoAtaqueD = ":/Recursos/Sprites/TaoAtaqueD.PNG";
+const QString Recursos::TaoRunA = ":/Recursos/Sprites/TaoRunA.PNG";
+const QString Recursos::TaoRunD = ":/Recursos/Sprites/TaoRunD.PNG";
+const QString Recursos::TaoCaidoH = ":/Recursos/Sprites/TaoCaidoHo.PNG";
+
+
+//Sprites nivel 3
 const QString Recursos::gokuNubeSprite = ":/Recursos/Sprites/GokuNube1.PNG";
 const QString Recursos::avionEnemigo1Sprite = ":/Recursos/Sprites/avionEnemigo1.PNG";
 const QString Recursos::avionEnemigo2Sprite= ":/Recursos/Sprites/avionEnemigo2.PNG";
+const QString Recursos::misilSprite = ":/Recursos/Sprites/Misil.PNG";
 
-
+//Sonidos
 const QString Recursos::sonidoSalto = ":/Recursos/Sonidos/salto.wav";
 const QString Recursos::sonidoGolpe = ":/Recursos/Sonidos/golpe.wav";
 const QString Recursos::sonidoIntro = ":/Recursos/Sonidos/intro.wav";

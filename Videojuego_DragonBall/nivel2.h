@@ -30,8 +30,9 @@ private:
     bool victoriaMostrada;
     bool derrotaMostrada;
     bool terminado;
-
+    //void reiniciarEscena();
     void actualizarBarrasVida();
+
 };
 
 #endif // NIVEL2_H
