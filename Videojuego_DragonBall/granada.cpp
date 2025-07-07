@@ -1,22 +1,30 @@
 #include "granada.h"
-#include <QSoundEffect>
 #include <QGraphicsScene>
+#include <QPainter>
+#include <QPixmap>
+#include <QTimer>
 #include <QDebug>
-#include "recursos.h"
+#include "personaje.h"
 
 Granada::Granada(qreal xInicial, qreal yInicial, QGraphicsItem* objetivoJugador, bool esDevuelta)
     : Obstaculo(nullptr), objetivo(objetivoJugador), devuelta(esDevuelta),
     explotando(false), yaColisiono(false) {
-    hojaGranada.load(Recursos::granadaSprite);
-    explosionSprite.load(Recursos::explosionSprite);
 
-    spriteAncho = hojaGranada.width() / 17;
-
-    spriteAlto = 36;
+    spriteAncho = 32;
+    spriteAlto = 32;
     frameActual = 0;
-    frameExplosion = 0;
 
-    setPixmap(hojaGranada.copy(0, 0, spriteAncho, spriteAlto));
+    // Crear círculo rojo temporal como sprite de la granada
+    QPixmap pixmap(spriteAncho, spriteAlto);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setBrush(Qt::red);
+    painter.setPen(Qt::black);
+    painter.drawEllipse(0, 0, spriteAncho, spriteAlto);
+    painter.end();
+
+    setPixmap(pixmap);
     setPos(xInicial, yInicial);
 
     velocidadX = devuelta ? 5.5 : -5.5;
@@ -30,46 +38,55 @@ Granada::Granada(qreal xInicial, qreal yInicial, QGraphicsItem* objetivoJugador,
 
 void Granada::mover() {
     if (explotando) {
-        if (frameExplosion < 12) {
-            int explosionAncho = 32;
-            int explosionAlto = 45;
-            setPixmap(explosionSprite.copy(frameExplosion * explosionAncho, 0, explosionAncho, explosionAlto));
-            frameExplosion++;
-        } else {
-            if (scene()) scene()->removeItem(this);
-            deleteLater();
-        }
         return;
     }
+
     velocidadY += gravedad;
     moveBy(velocidadX, velocidadY);
-    if (!hojaGranada.isNull() && (frameActual * spriteAncho + spriteAncho <= hojaGranada.width())) {
-        setPixmap(hojaGranada.copy(frameActual * spriteAncho, 0, spriteAncho, spriteAlto));
-    }
-    frameActual = (frameActual + 1) % 17;
-    if (y() > 550) {
+
+    if (!yaColisiono && objetivo && collidesWithItem(objetivo)) {
+        yaColisiono = true;
+
+        // Aplica daño si NO fue devuelta
+        if (!devuelta) {
+            Personaje* personajeObjetivo = dynamic_cast<Personaje*>(objetivo);
+            if (personajeObjetivo) {
+                personajeObjetivo->recibirDanio(1);
+                qDebug() << "La granada dañó al jugador.";
+            } else {
+                qDebug() << "El objetivo no es un Personaje válido.";
+            }
+        }
+
         explotar();
         return;
     }
-    if (!yaColisiono && objetivo && collidesWithItem(objetivo)) {
-        yaColisiono = true;
+
+    if (y() > 550) {
         explotar();
-        if (!devuelta) {
-            if (QObject* obj = dynamic_cast<QObject*>(objetivo)) {
-                QMetaObject::invokeMethod(obj, "recibirDanio", Q_ARG(int, 1));
-            }
-        }
     }
 }
 
 
 void Granada::explotar() {
     explotando = true;
-    frameExplosion = 0;
     velocidadX = 0;
     velocidadY = 0;
-    setPixmap(explosionSprite.copy(0, 0, 32, 45));
-    QSoundEffect* sonidoExplosion = new QSoundEffect(this);
-    sonidoExplosion->setSource(QUrl("qrc:/Recursos/Sonidos/explosion.wav"));
-    sonidoExplosion->play();
+
+    // Círculo amarillo de explosión
+    QPixmap explosion(spriteAncho, spriteAlto);
+    explosion.fill(Qt::transparent);
+
+    QPainter painter(&explosion);
+    painter.setBrush(Qt::yellow);
+    painter.setPen(Qt::black);
+    painter.drawEllipse(0, 0, spriteAncho, spriteAlto);
+    painter.end();
+
+    setPixmap(explosion);
+
+    QTimer::singleShot(300, this, [this]() {
+        if (scene()) scene()->removeItem(this);
+        deleteLater();
+    });
 }
