@@ -18,13 +18,27 @@ public:
     static const QString fondoWinGoku;
 
     // Sprites
-    static const QString gokuSprite;
+    static const QString gokuRunA;
+    static const QString gokuRunD;
+    static const QString gokuAtaque1;
+    static const QString gokuAtaque2;
+    static const QString gokuJump;
+    static const QString gokuCaido;
+
+    static const QString TaoAtaqueA;
+    static const QString TaoAtaqueD;
+    static const QString TaoRunA;
+    static const QString TaoRunD;
+    static const QString TaoCaidoH;
+
+
     static const QString misilSprite;
     static const QString TaoRunSprite;
     static const QString TaoJumpSprite;
     static const QString TaoCaidoSprite;
     static const QString RocaSprite;
     static const QString granadaSprite;
+    static const QString explosionSprite;
     static const QString TaoenemigoSprite;
     static const QString gokuNubeSprite;
     static const QString avionEnemigo1Sprite;

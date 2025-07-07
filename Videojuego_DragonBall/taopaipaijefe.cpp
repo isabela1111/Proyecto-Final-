@@ -1,73 +1,102 @@
 #include "taopaipaijefe.h"
+#include "granada.h"
 #include "recursos.h"
-
 #include <QGraphicsScene>
 #include <QDebug>
 
 TaoPaiPaiJefe::TaoPaiPaiJefe(QGraphicsView* vista, QObject* parent)
-    : Personaje(vista, parent), puedeAtacar(true), objetivoJugador(nullptr) {
-
+    : Personaje(vista, parent), objetivoJugador(nullptr), direccion(-1),
+    frameMovimiento(0), frameAtaque(0), estaCayendo(false)
+{
     nombre = "Tao Pai Pai";
     vida = 5;
-    velocidad = 3;
+    velocidad = 2.5;
 
-    hojaSprites.load(Recursos::TaoenemigoSprite);
-    
-    spriteX = 0;
-    spriteY = 1;  // fila 1, que parece ser la correcta
-    spriteAncho = 140; // ancho más grande para que no se corte
-    spriteAlto = 160;
-
-    setPixmap(hojaSprites.copy(spriteX * spriteAncho, spriteY * spriteAlto, spriteAncho, spriteAlto));
-    setPos(600, 400 - spriteAlto + 60); // mejor alineación con el suelo
+    hojaMovimiento.load(Recursos::TaoRunA);
+    spriteAlto = 59;
+    setPixmap(hojaMovimiento.copy(0, 0, spriteAncho, spriteAlto));
+    setScale(2.0);
+    setPos(600, 400 - spriteAlto * scale());
 
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
 
-    // Ataques periódicos
-    QTimer* ataqueTimer = new QTimer(this);
-    connect(ataqueTimer, &QTimer::timeout, this, &TaoPaiPaiJefe::atacar);
-    ataqueTimer->start(2500); // Cada 2.5 segundos
-
-    // Movimiento automático
     movimientoTimer = new QTimer(this);
     connect(movimientoTimer, &QTimer::timeout, this, &TaoPaiPaiJefe::mover);
-    movimientoTimer->start(1800);
-}
+    movimientoTimer->start(80);
 
-void TaoPaiPaiJefe::atacar() {
-    lanzarGranada();
-}
-
-void TaoPaiPaiJefe::lanzarGranada() {
-    if (!puedeAtacar || !objetivoJugador) return;
-
-    qDebug() << "Tao Pai Pai lanza una granada.";
-
-    Granada* granada = new Granada(x(), y(), objetivoJugador);
-    emit granadaLanzada(granada);
-
-    if (scene()) scene()->addItem(granada);
-
-    puedeAtacar = false;
-    QTimer::singleShot(1500, this, [this]() {
-        puedeAtacar = true;
-    });
-}
-
-void TaoPaiPaiJefe::setObjetivo(Personaje* objetivo) {
-    objetivoJugador = objetivo;
+    ataqueTimer = new QTimer(this);
+    connect(ataqueTimer, &QTimer::timeout, this, &TaoPaiPaiJefe::atacar);
+    ataqueTimer->start(700);
 }
 
 void TaoPaiPaiJefe::mover() {
-    if (!objetivoJugador) return;
-
-    if (x() > objetivoJugador->x()) {
-        moveBy(-velocidad, 0);
-    } else if (x() < objetivoJugador->x()) {
-        moveBy(velocidad, 0);
+    if (!scene() || estaCayendo) return;
+    qreal nuevaX = x() + direccion * velocidad;
+    qreal anchoEscena = scene()->width();
+    // Verifica si esta en los extremos
+    bool enExtremoIzquierdo = nuevaX <= 0;
+    bool enExtremoDerecho = nuevaX + boundingRect().width() * scale() >= anchoEscena;
+    if (enExtremoIzquierdo || enExtremoDerecho) {
+        direccion *= -1;
+        lanzarGranada();
+    } else {
+        moveBy(direccion * velocidad, 0);
     }
+    hojaMovimiento.load(direccion == -1 ? Recursos::TaoRunA : Recursos::TaoRunD);
+    spriteAncho = 54;
+    spriteAlto = 59;
+    frameMovimiento = (frameMovimiento + 1) % 5;
+    setPixmap(hojaMovimiento.copy(frameMovimiento * spriteAncho, 0, spriteAncho, spriteAlto));
+    setScale(2.0);
+}
 
-    spriteX = (spriteX + 1) % 3;
-    setPixmap(hojaSprites.copy(spriteX * spriteAncho, spriteY * spriteAlto, spriteAncho, spriteAlto));
+void TaoPaiPaiJefe::atacar() {
+    if (!objetivoJugador || estaCayendo) return;
+    if (qAbs(x() - objetivoJugador->x()) < 100) {
+        bool haciaIzquierda = x() > objetivoJugador->x();
+        hojaMovimiento.load(haciaIzquierda ? Recursos::TaoAtaqueA : Recursos::TaoAtaqueD);
+        spriteAncho = 554 / 10;
+        spriteAlto = 67;
+        setPixmap(hojaMovimiento.copy(frameAtaque * spriteAncho, 0, spriteAncho, spriteAlto));
+        setScale(2.0);
+        frameAtaque = (frameAtaque + 1) % 10;
+        if (collidesWithItem(objetivoJugador)) {
+            objetivoJugador->recibirDanio(1);
+        }
+    }
+}
+
+void TaoPaiPaiJefe::lanzarGranada() {
+    if (!objetivoJugador || !scene()) return;
+    qreal xSalida = x() + (boundingRect().width() * scale()) / 2 - 10;
+    qreal ySalida = y() + (boundingRect().height() * scale()) / 2;
+    Granada* granada = new Granada(xSalida, ySalida, objetivoJugador, false);
+    granada->setZValue(1);
+    scene()->addItem(granada);
+    qDebug() << "Tao lanza granada desde (" << xSalida << "," << ySalida << ")";
+}
+
+void TaoPaiPaiJefe::setObjetivo(Personaje* jugador) {
+    objetivoJugador = jugador;
+
+}
+
+void TaoPaiPaiJefe::recibirDanio(int cantidad) {
+    if (estaCayendo) return;
+    vida -= cantidad;
+    qDebug() << nombre << "recibió" << cantidad << "de daño. Vida restante:" << vida;
+
+    if (vida <= 0) {
+        setVisible(false);
+        return;
+    }
+    hojaMovimiento.load(Recursos::TaoCaidoH);
+    spriteAncho = 64;
+    spriteAlto = 34;
+    setPixmap(hojaMovimiento.copy(0, 0, spriteAncho, spriteAlto));
+    estaCayendo = true;
+    QTimer::singleShot(600, this, [this]() {
+        estaCayendo = false;
+    });
 }

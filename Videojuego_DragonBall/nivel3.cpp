@@ -67,7 +67,6 @@ void Nivel3::iniciarnivel() {
     vista->centerOn(goku);
 }
 
-
 void Nivel3::generarObstaculo() {
     if (!goku || terminado) return;
     int altoEscena = static_cast<int>(escena->sceneRect().height());
@@ -127,7 +126,6 @@ void Nivel3::actualizarDistancia() {
         });
     }
 }
-
 
 void Nivel3::perderVida() {
     if (terminado) return;

@@ -2,7 +2,11 @@
 #include <QGraphicsPixmapItem>
 #include <QDebug>
 #include <QGraphicsProxyWidget>
+#include <QPushButton>
+#include <QTimer>
 #include "recursos.h"
+#include "goku.h"
+#include "taopaipaijefe.h"
 
 Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
     escena = nullptr;
@@ -19,29 +23,71 @@ Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
 void Nivel2::iniciarnivel() {
     escena = new QGraphicsScene();
     escena->setSceneRect(0, 0, 800, 600);
+    vista->setScene(escena);
+
+    QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondo.scaled(800, 600));
+    escena->addItem(fondoItem);
+    if (!goku) {
+        goku = new Goku(vista);
+        connect(goku, &Goku::danioRecibido, this, [this]() {
+            qDebug() << "Goku recibió daño → se reinicia la escena";
+            //reiniciarEscena();
+        });
+    }
+    if (!taoPaiPai) {
+        taoPaiPai = new TaoPaiPaiJefe(vista);
+        taoPaiPai->setObjetivo(goku);
+    }
+    goku->setPos(100, 400);
+    taoPaiPai->setPos(600, 400);
+    escena->addItem(goku);
+    escena->addItem(taoPaiPai);
+    goku->setFocus();
+    if (personajes.isEmpty()) {
+        personajes.append(goku);
+        personajes.append(taoPaiPai);
+    }
+    if (barrasVidaGoku.isEmpty() && barrasVidaTao.isEmpty()) {
+        crearBarrasVida();
+    } else {
+        for (auto* barra : barrasVidaGoku) escena->addItem(barra);
+        for (auto* barra : barrasVidaTao) escena->addItem(barra);
+    }
+    if (!timerAtaques) {
+        timerAtaques = new QTimer(this);
+        connect(timerAtaques, &QTimer::timeout, taoPaiPai, &TaoPaiPaiJefe::lanzarGranada);
+        timerAtaques->start(3000);
+    }
+    QTimer* timerActualizacion = new QTimer(this);
+    connect(timerActualizacion, &QTimer::timeout, this, &Nivel2::actualizar);
+    timerActualizacion->start(100);
+}
+
+/*
+void Nivel2::reiniciarEscena() {
+    if (!escena) return;
+
+    escena->clear();
 
     QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondo.scaled(800, 600));
     escena->addItem(fondoItem);
 
-    goku = new Goku();
-    taoPaiPai = new TaoPaiPaiJefe();
-    taoPaiPai->setObjetivo(goku);
-
+    // Reposicionar personajes existentes
     goku->setPos(100, 400);
     taoPaiPai->setPos(600, 400);
-
     escena->addItem(goku);
     escena->addItem(taoPaiPai);
 
-    personajes.append(goku);
-    personajes.append(taoPaiPai);
+    // Volver a mostrar barras de vida
+    for (auto* barra : barrasVidaGoku)
+        escena->addItem(barra);
+    for (auto* barra : barrasVidaTao)
+        escena->addItem(barra);
 
-    crearBarrasVida();
-
-    timerAtaques = new QTimer(this);
-    connect(timerAtaques, &QTimer::timeout, taoPaiPai, &TaoPaiPaiJefe::lanzarGranada);
-    timerAtaques->start(3000);
+    goku->setFocus();
 }
+*/
+
 
 void Nivel2::actualizar() {
     if (!goku || !taoPaiPai) return;
@@ -62,20 +108,12 @@ void Nivel2::actualizar() {
 }
 
 void Nivel2::crearBarrasVida() {
-    for (QGraphicsRectItem* barra : barrasVidaGoku)
-        delete barra;
-    for (QGraphicsRectItem* barra : barrasVidaTao)
-        delete barra;
-    barrasVidaGoku.clear();
-    barrasVidaTao.clear();
-
     for (int i = 0; i < goku->getVida(); ++i) {
         QGraphicsRectItem* barra = new QGraphicsRectItem(20 + i * 25, 20, 20, 20);
         barra->setBrush(Qt::green);
         escena->addItem(barra);
         barrasVidaGoku.append(barra);
     }
-
     for (int i = 0; i < taoPaiPai->getVida(); ++i) {
         QGraphicsRectItem* barra = new QGraphicsRectItem(580 + i * 25, 20, 20, 20);
         barra->setBrush(Qt::red);
@@ -88,7 +126,6 @@ void Nivel2::actualizarBarrasVida() {
     for (int i = 0; i < barrasVidaGoku.size(); ++i) {
         barrasVidaGoku[i]->setVisible(i < goku->getVida());
     }
-
     for (int i = 0; i < barrasVidaTao.size(); ++i) {
         barrasVidaTao[i]->setVisible(i < taoPaiPai->getVida());
     }
@@ -97,15 +134,13 @@ void Nivel2::actualizarBarrasVida() {
 void Nivel2::mostrarPantallaGameOver() {
     escena->clear();
     QPixmap fondoGameOver(Recursos::fondoGameOverGoku);
-    if (fondoGameOver.isNull()) {
-        qDebug() << "No se pudo cargar imagen de derrota.";
-        return;
-    }
+    if (fondoGameOver.isNull()) return;
+
     QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoGameOver.scaled(800, 600));
     fondoItem->setZValue(0);
     escena->addItem(fondoItem);
     fondoItem->setPos(0, 0);
-    // Boton Volver al menu
+
     QPushButton* botonMenu = new QPushButton("Volver al menú");
     botonMenu->setFixedSize(200, 50);
     botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
@@ -115,23 +150,19 @@ void Nivel2::mostrarPantallaGameOver() {
         QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
         proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
     });
-    connect(botonMenu, &QPushButton::clicked, [this]() {
-        emit volverAlMenu();
-    });
+    connect(botonMenu, &QPushButton::clicked, this, &Nivel2::volverAlMenu);
 }
 
 void Nivel2::mostrarPantallaVictoria() {
     escena->clear();
     QPixmap fondoVictoria(Recursos::fondoWinGoku);
-    if (fondoVictoria.isNull()) {
-        qDebug() << "No se pudo cargar imagen de victoria.";
-        return;
-    }
+    if (fondoVictoria.isNull()) return;
+
     QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoVictoria.scaled(800, 600));
     fondoItem->setZValue(0);
     escena->addItem(fondoItem);
     fondoItem->setPos(0, 0);
-    // Boton Volver al menu
+
     QPushButton* botonMenu = new QPushButton("Volver al menú");
     botonMenu->setFixedSize(200, 50);
     botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
@@ -141,8 +172,6 @@ void Nivel2::mostrarPantallaVictoria() {
         QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
         proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
     });
-    connect(botonMenu, &QPushButton::clicked, [this]() {
-        emit volverAlMenu();
-    });
+    connect(botonMenu, &QPushButton::clicked, this, &Nivel2::volverAlMenu);
 }
 

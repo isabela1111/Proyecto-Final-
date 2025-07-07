@@ -2,6 +2,7 @@
 #define GOKU_H
 
 #include "personaje.h"
+#include <QTimer>
 
 class Goku : public Personaje {
     Q_OBJECT
@@ -9,22 +10,33 @@ class Goku : public Personaje {
 public:
     Goku(QGraphicsView* vista = nullptr, QObject* parent = nullptr);
 
-    void mover() override;
+    void mover() override {}
     void saltar() override;
     void atacar() override;
-    void devolverGranada();  // activa modo ataque
-    bool tieneNubeVoladora;
-
+    void recibirDanio(int cantidad) override;
+    void devolverGranada();
+    bool estaEnModoAtaque() const;
     void keyPressEvent(QKeyEvent* event) override;
 
-    bool estaEnModoAtaque() const;
+    void moverIzquierda();
+    void moverDerecha();
+    void mostrarCaida();
+    void actualizarSalto();
+
+
+signals:
+    void danioRecibido();
 
 private:
     int frameActual;
     int tiempoSalto;
     bool enElAire;
     bool modoAtaque;
+    bool ataqueAlterno;
+
     QTimer* temporizadorAtaque;
+    QTimer* temporizadorSalto;
+
 };
 
 #endif // GOKU_H

@@ -2,9 +2,7 @@
 #define TAOPAIPAIJEFE_H
 
 #include "personaje.h"
-
 #include "granada.h"
-
 #include <QTimer>
 
 class TaoPaiPaiJefe : public Personaje {
@@ -16,6 +14,7 @@ public:
     void lanzarGranada();
     void setObjetivo(Personaje* objetivo);
     void mover() override;
+    void recibirDanio(int cantidad);
 
 signals:
     void granadaLanzada(Granada* granada);
@@ -23,7 +22,19 @@ signals:
 private:
     Personaje* objetivoJugador;
     bool puedeAtacar;
+
+    int direccion;
+    int filaActualAtaque;
+    int columnaAtaque;
     QTimer* movimientoTimer;
+    QTimer* ataqueTimer;
+    int frameMovimiento;
+    int frameAtaque;
+    bool estaCayendo;
+
+    QPixmap hojaMovimiento;
+
+
 };
 
 #endif // TAOPAIPAIJEFE_H
