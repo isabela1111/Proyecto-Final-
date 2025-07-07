@@ -17,7 +17,6 @@
         <file>Recursos/Sonidos/golpe.wav</file>
         <file>Recursos/Sonidos/salto.wav</file>
         <file>Recursos/Sonidos/intro.wav</file>
-        <file>Recursos/Sonidos/gokusalto.wav</file>
         <file>Recursos/Sonidos/explosion.wav</file>
         <file>Recursos/Sprites/GokuNube1.PNG</file>
         <file>Recursos/Sprites/avionEnemigo1.PNG</file>
@@ -32,10 +31,14 @@
         <file>Recursos/Sprites/gokuJump.PNG</file>
         <file>Recursos/Sprites/gokuRunA.PNG</file>
         <file>Recursos/Sprites/gokuRunD.PNG</file>
-        <file>Recursos/Sprites/TaoAtaqueD.PNG</file>
         <file>Recursos/Sprites/TaoCaidoHo.PNG</file>
-        <file>Recursos/Sprites/TaoRunA.PNG</file>
-        <file>Recursos/Sprites/TaoRunD.PNG</file>
-        <file>Recursos/Sprites/TaoAtaqueA.PNG</file>
+        <file>Recursos/Sprites/TaoAparicionDe.PNG</file>
+        <file>Recursos/Sprites/TaoAparicionIz.PNG</file>
+        <file>Recursos/Sprites/TaoAtauqeA.PNG</file>
+        <file>Recursos/Sprites/TaoAtauqeD.PNG</file>
+        <file>Recursos/Sprites/TaoGranada.PNG</file>
+        <file>Recursos/Sonidos/gokudanio.wav</file>
+        <file>Recursos/Sonidos/taodanio.wav</file>
+        <file>Recursos/Sonidos/Nivel2.wav</file>
     </qresource>
 </RCC>

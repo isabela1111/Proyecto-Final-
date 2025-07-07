@@ -3,64 +3,76 @@
 #include "recursos.h"
 #include <QGraphicsScene>
 #include <QDebug>
+#include <QTimer>
+#include <QRandomGenerator>
+#include <QSoundEffect>
 
 TaoPaiPaiJefe::TaoPaiPaiJefe(QGraphicsView* vista, QObject* parent)
     : Personaje(vista, parent), objetivoJugador(nullptr), direccion(-1),
-    frameMovimiento(0), frameAtaque(0), estaCayendo(false)
+    frameMovimiento(0), frameAtaque(0), estaCayendo(false), estaVisible(false)
 {
     nombre = "Tao Pai Pai";
     vida = 5;
     velocidad = 2.5;
+    setScale(2.8);
 
-    hojaMovimiento.load(Recursos::TaoRunA);
-    spriteAlto = 59;
-    setPixmap(hojaMovimiento.copy(0, 0, spriteAncho, spriteAlto));
-    setScale(2.0);
-    setPos(600, 400 - spriteAlto * scale());
+    setPixmap(QPixmap(Recursos::TaoAparicionDe));
+    setVisible(false);
+    setFlag(QGraphicsItem::ItemIsFocusable, false);
+    // Aparición
+    posicionesAparicion << QPointF(100, 380) << QPointF(400, 380) << QPointF(650, 380);
+    // Temporizadores
+    aparicionTimer = new QTimer(this);
+    connect(aparicionTimer, &QTimer::timeout, this, &TaoPaiPaiJefe::aparecer);
+    aparicionTimer->start(3000);
 
-    setFlag(QGraphicsItem::ItemIsFocusable);
-    setFocus();
-
-    movimientoTimer = new QTimer(this);
-    connect(movimientoTimer, &QTimer::timeout, this, &TaoPaiPaiJefe::mover);
-    movimientoTimer->start(80);
+    desaparicionTimer = new QTimer(this);
+    connect(desaparicionTimer, &QTimer::timeout, this, &TaoPaiPaiJefe::desaparecer);
 
     ataqueTimer = new QTimer(this);
     connect(ataqueTimer, &QTimer::timeout, this, &TaoPaiPaiJefe::atacar);
     ataqueTimer->start(700);
+
+    QTimer* granadaTimer = new QTimer(this);
+    connect(granadaTimer, &QTimer::timeout, this, &TaoPaiPaiJefe::lanzarGranada);
+    granadaTimer->start(5000); // Lanza cada 5s
 }
 
-void TaoPaiPaiJefe::mover() {
-    if (!scene() || estaCayendo) return;
-    qreal nuevaX = x() + direccion * velocidad;
-    qreal anchoEscena = scene()->width();
-    // Verifica si esta en los extremos
-    bool enExtremoIzquierdo = nuevaX <= 0;
-    bool enExtremoDerecho = nuevaX + boundingRect().width() * scale() >= anchoEscena;
-    if (enExtremoIzquierdo || enExtremoDerecho) {
-        direccion *= -1;
-        lanzarGranada();
-    } else {
-        moveBy(direccion * velocidad, 0);
+void TaoPaiPaiJefe::aparecer() {
+    if (!scene()) return;
+    estaVisible = true;
+    int idx = QRandomGenerator::global()->bounded(posicionesAparicion.size());
+    setPos(posicionesAparicion[idx]);
+    bool haciaIzquierda = objetivoJugador && x() > objetivoJugador->x();
+    hojaMovimiento.load(haciaIzquierda ? Recursos::TaoAparicionIz : Recursos::TaoAparicionDe);
+
+    spriteAncho = 40;
+    spriteAlto = 57;
+    for (int i = 0; i < 4; ++i) {
+        QTimer::singleShot(i * 100, this, [this, i]() {
+            setPixmap(hojaMovimiento.copy(i * spriteAncho, 0, spriteAncho, spriteAlto));
+        });
     }
-    hojaMovimiento.load(direccion == -1 ? Recursos::TaoRunA : Recursos::TaoRunD);
-    spriteAncho = 54;
-    spriteAlto = 59;
-    frameMovimiento = (frameMovimiento + 1) % 5;
-    setPixmap(hojaMovimiento.copy(frameMovimiento * spriteAncho, 0, spriteAncho, spriteAlto));
-    setScale(2.0);
+    setVisible(true);
+    desaparicionTimer->start(1500); // Se borra tras 1.5 segundos
+}
+
+void TaoPaiPaiJefe::desaparecer() {
+    estaVisible = false;
+    setVisible(false);
 }
 
 void TaoPaiPaiJefe::atacar() {
-    if (!objetivoJugador || estaCayendo) return;
+    if (!estaVisible || !objetivoJugador || estaCayendo) return;
     if (qAbs(x() - objetivoJugador->x()) < 100) {
         bool haciaIzquierda = x() > objetivoJugador->x();
         hojaMovimiento.load(haciaIzquierda ? Recursos::TaoAtaqueA : Recursos::TaoAtaqueD);
-        spriteAncho = 554 / 10;
+
+        spriteAncho = 265 / 7;
         spriteAlto = 67;
+
         setPixmap(hojaMovimiento.copy(frameAtaque * spriteAncho, 0, spriteAncho, spriteAlto));
-        setScale(2.0);
-        frameAtaque = (frameAtaque + 1) % 10;
+        frameAtaque = (frameAtaque + 1) % 7;
         if (collidesWithItem(objetivoJugador)) {
             objetivoJugador->recibirDanio(1);
         }
@@ -68,35 +80,58 @@ void TaoPaiPaiJefe::atacar() {
 }
 
 void TaoPaiPaiJefe::lanzarGranada() {
-    if (!objetivoJugador || !scene()) return;
-    qreal xSalida = x() + (boundingRect().width() * scale()) / 2 - 10;
-    qreal ySalida = y() + (boundingRect().height() * scale()) / 2;
-    Granada* granada = new Granada(xSalida, ySalida, objetivoJugador, false);
-    granada->setZValue(1);
-    scene()->addItem(granada);
-    qDebug() << "Tao lanza granada desde (" << xSalida << "," << ySalida << ")";
+    if (!estaVisible || !objetivoJugador || !scene()) return;
+
+    hojaMovimiento.load(Recursos::TaoGranada);
+    spriteAncho = 224 / 5;
+    spriteAlto = 63;
+
+    // Animación de lanzamiento en 5 frames (100 ms cada uno)
+    for (int i = 0; i < 5; ++i) {
+        QTimer::singleShot(i * 100, this, [this, i]() {
+            setPixmap(hojaMovimiento.copy(i * spriteAncho, 0, spriteAncho, spriteAlto));
+        });
+    }
+
+    // Lanzar la granada después del 3er frame (mejor sincronía visual)
+    QTimer::singleShot(300, this, [this]() {
+        if (!scene()) return;
+
+        // Ajuste de salida para que aparezca desde la mano de Tao
+        qreal xSalida = x() + 30 * scale();  // puedes ajustar +30 si la mano está más lejos
+        qreal ySalida = y() + 15 * scale();  // +15 para salir justo desde arriba del brazo
+
+        Granada* granada = new Granada(xSalida, ySalida, objetivoJugador, false);
+        granada->setZValue(1);
+        scene()->addItem(granada);
+
+        qDebug() << "Tao lanza granada desde (" << xSalida << "," << ySalida << ")";
+    });
 }
 
-void TaoPaiPaiJefe::setObjetivo(Personaje* jugador) {
-    objetivoJugador = jugador;
-
-}
 
 void TaoPaiPaiJefe::recibirDanio(int cantidad) {
-    if (estaCayendo) return;
+    if (!estaVisible || estaCayendo) return;
     vida -= cantidad;
     qDebug() << nombre << "recibió" << cantidad << "de daño. Vida restante:" << vida;
-
+    QSoundEffect* sonidoTaoDanio = new QSoundEffect(this);
+    sonidoTaoDanio->setSource(QUrl("qrc:/Recursos/Sonidos/taodanio.wav"));
+    sonidoTaoDanio->play();
     if (vida <= 0) {
         setVisible(false);
+        estaVisible = false;
         return;
     }
     hojaMovimiento.load(Recursos::TaoCaidoH);
-    spriteAncho = 64;
-    spriteAlto = 34;
+    spriteAncho = 60;
+    spriteAlto = 31;
     setPixmap(hojaMovimiento.copy(0, 0, spriteAncho, spriteAlto));
     estaCayendo = true;
     QTimer::singleShot(600, this, [this]() {
         estaCayendo = false;
     });
+}
+
+void TaoPaiPaiJefe::setObjetivo(Personaje* jugador) {
+    objetivoJugador = jugador;
 }

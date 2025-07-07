@@ -132,6 +132,10 @@ void Goku::mostrarCaida() {
 void Goku::recibirDanio(int cantidad) {
     vida -= cantidad;
     qDebug() << nombre << "recibió" << cantidad << "de daño. Vida restante:" << vida;
+
+    QSoundEffect* sonidoGokuDanio = new QSoundEffect(this);
+    sonidoGokuDanio->setSource(QUrl("qrc:/Recursos/Sonidos/gokudanio.wav"));
+    sonidoGokuDanio->play();
     mostrarCaida();
     emit danioRecibido();
 }
