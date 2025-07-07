@@ -27,9 +27,11 @@ public:
 
     static const QString TaoAtaqueA;
     static const QString TaoAtaqueD;
-    static const QString TaoRunA;
-    static const QString TaoRunD;
+    static const QString TaoAparicionIz;
+    static const QString TaoAparicionDe;
     static const QString TaoCaidoH;
+    static const QString TaoGranada;
+
 
 
     static const QString misilSprite;
