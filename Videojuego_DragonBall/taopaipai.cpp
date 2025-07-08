@@ -11,6 +11,9 @@ TaoPaiPai::TaoPaiPai(QGraphicsView* vista, QObject* parent)
     vida = 5;
     velocidad = 5;
     cayendo = false;
+    saltando = false;
+    puedeSaltar = false;
+    saltoDisponible = true;
 
     spriteAncho = 68;
     spriteAlto = 59;
@@ -45,7 +48,8 @@ void TaoPaiPai::activarFisica(bool activo) {
     if (activo) {
         if (!timerFisica->isActive())
             timerFisica->start(30);
-    } else {
+    }
+    else {
         timerFisica->stop();
     }
 }
@@ -62,16 +66,20 @@ void TaoPaiPai::mover() {
     hojaSprites.load(Recursos::TaoRunSprite);
     frameActual = 0;
     timerCaminar->start(100);
+    puedeSaltar = true;
 }
 
 void TaoPaiPai::saltar() {
-    estaMoviendose = true;
+    if (!puedeSaltar || !saltoDisponible) return;
     velocidadY = -12;
     hojaSprites.load(Recursos::TaoJumpSprite);
     frameActual = 0;
     timerSaltar->start(100);
     efectoSalto->play();
+    saltoDisponible = false;
+    puedeSaltar = false;
 }
+
 
 void TaoPaiPai::animarCaminar() {
     if (frameActual >= filaMaxima) {
@@ -89,6 +97,7 @@ void TaoPaiPai::animarSalto() {
         frameActual = 0;
         timerSaltar->stop();
         estaMoviendose = false;
+        saltando = false;
         return;
     }
     actualizarFrame();
@@ -100,14 +109,15 @@ void TaoPaiPai::actualizarFisica() {
         velocidadY += gravedad;
     }
     moveBy(0, velocidadY);
-    if (y() + boundingRect().height() > 600) {
-        mostrarCaida();
+    if (velocidadY > 0 && !puedeSaltar) {
+        puedeSaltar = true;
     }
     if (y() < 50) {
-        setY(500);
+        setY(50);
     }
     setX(250);
 }
+
 
 void TaoPaiPai::mostrarCaida() {
     hojaSprites.load(Recursos::TaoCaidoSprite);
@@ -129,6 +139,13 @@ void TaoPaiPai::keyPressEvent(QKeyEvent* event) {
     Personaje::keyPressEvent(event);
 }
 
+void TaoPaiPai::keyReleaseEvent(QKeyEvent* event) {
+    if (event->key() == Qt::Key_Space) {
+        saltoDisponible = true;
+    }
+    Personaje::keyReleaseEvent(event);
+}
+
 void TaoPaiPai::reproducirSonidoGolpe() {
     if (efectoGolpe) efectoGolpe->play();
 }
@@ -136,4 +153,7 @@ void TaoPaiPai::reproducirSonidoGolpe() {
 void TaoPaiPai::reiniciarFisica() {
     velocidadY = 0;
     cayendo = false;
+    puedeSaltar = true;
 }
+
+

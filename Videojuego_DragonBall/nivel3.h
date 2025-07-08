@@ -8,6 +8,8 @@
 
 #include <QGraphicsTextItem>
 #include <QGraphicsRectItem>
+#include <QMediaPlayer>
+#include <QAudioOutput>
 #include <QVector>
 #include <QSoundEffect>
 
@@ -18,6 +20,7 @@ public:
     Nivel3(QGraphicsView* vista, QObject* parent = nullptr);
     void iniciarnivel() override;
     ~Nivel3();
+    void detenerMusica() override;
 
 private:
     QGraphicsView* vista;
@@ -38,6 +41,9 @@ private:
     void perderVida();
     void mostrarGameOver();
     void actualizarScroll();
+    QMediaPlayer* musicaNivel3 = nullptr;
+    QAudioOutput* salidaAudio = nullptr;
+
 
 };
 

@@ -37,8 +37,11 @@
         <file>Recursos/Sprites/TaoAtauqeA.PNG</file>
         <file>Recursos/Sprites/TaoAtauqeD.PNG</file>
         <file>Recursos/Sprites/TaoGranada.PNG</file>
+        <file>Recursos/Sonidos/gokusalto.wav</file>
+        <file>Recursos/Sonidos/Nivel2.wav</file>
+        <file>Recursos/Sonidos/Nivel3.wav</file>
         <file>Recursos/Sonidos/gokudanio.wav</file>
         <file>Recursos/Sonidos/taodanio.wav</file>
-        <file>Recursos/Sonidos/Nivel2.wav</file>
+        <file>Recursos/Sonidos/Nivel1.wav</file>
     </qresource>
 </RCC>

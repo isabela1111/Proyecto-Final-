@@ -41,7 +41,6 @@ AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
     }
 }
 
-
 void AvionEnemigo::mover() {
     if (!scene() || !goku || !goku->scene()) {
         deleteLater();

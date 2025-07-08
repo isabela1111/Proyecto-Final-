@@ -51,9 +51,12 @@ public:
     static const QString sonidoIntro;
     static const QString sonidoSalto;
     static const QString sonidoGolpe;
-    static const QString sonidoNivel2;
+    static const QString sonidoNivel1;
     static const QString sonidoGokuDanio;
     static const QString sonidoTaoDanio;
+    static const QString sonidoNivel2;
+    static const QString sonidoNivel3;
+
 
 
 

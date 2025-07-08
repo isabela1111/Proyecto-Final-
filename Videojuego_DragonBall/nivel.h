@@ -7,12 +7,13 @@
 #include <QGraphicsView>
 #include <QList>
 #include <QPushButton>
+
 #include "personaje.h"
 
 class Nivel : public QObject {
     Q_OBJECT
 public:
-    explicit Nivel(QObject* parent = nullptr);
+    explicit Nivel(QGraphicsView* vista, QObject* parent = nullptr);
 
     QPixmap fondo;
     bool terminado = false;
@@ -23,7 +24,7 @@ public:
     virtual void iniciarnivel();
     virtual void actualizar();
     virtual void terminar();
-    virtual void mostrarCinematicaFinal();
+    virtual void detenerMusica();
 
 protected:
     void mostrarPantallaFinal(const QPixmap& fondo, bool victoria);

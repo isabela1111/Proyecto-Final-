@@ -2,11 +2,13 @@
 #define NIVEL1_H
 
 #include "nivel.h"
-
 #include "taopaipai.h"
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QGraphicsTextItem>
+#include <QMediaPlayer>
+#include <QAudioOutput>
+
 #include <QTimer>
 
 class Nivel1 : public Nivel {
@@ -25,6 +27,7 @@ public:
     QGraphicsTextItem* textoInicio = nullptr;
     QGraphicsTextItem* textoAltura;
     int metrosSubidos;
+    void detenerMusica() override;
 
 private slots:
     void actualizarCronometro();
@@ -35,9 +38,9 @@ private:
     void aplicarGravedad();
     void verificarCaida();
     void crearBarrasVida();
-    void actualizarBarraVida();
     void mostrarPantallaGameOver();
     void mostrarPantallaVictoria();
+    void ajustarDificultad();
 
     // Elementos de escena
     QGraphicsPixmapItem* fondoItem = nullptr;
@@ -53,13 +56,16 @@ private:
     int tiempoRestante;
     bool fisicaActiva = false;
 
-    // Temporizadores
     QTimer* temporizador;
     QTimer* timerCronometro;
     QTimer* timerPiedras;
+    int piedrasPorIntervalo;
+
+    QMediaPlayer* musicaNivel1;
+    QAudioOutput* salidaAudio1;
+
 
     const int ALTURA_SECCION = 600;
 };
 
 #endif // NIVEL1_H
-

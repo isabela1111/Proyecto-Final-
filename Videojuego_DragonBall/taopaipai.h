@@ -22,8 +22,9 @@ public:
     void reproducirSonidoGolpe();
     void reiniciarFisica();
     void activarFisica(bool activo);
-
     bool cayendo;
+    void keyReleaseEvent(QKeyEvent* event) override;
+
 
 private slots:
     void animarCaminar();
@@ -38,7 +39,10 @@ private:
     float gravedad;
     bool enElAire;
     bool estaMoviendose;
-    bool puedeSaltar = true;
+    bool saltando;
+    bool puedeSaltar;
+    bool saltoDisponible;
+
 
     // Sprite y animaciones
     QPixmap hojaSprites;
