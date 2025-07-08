@@ -4,6 +4,8 @@
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
 #include <QTimer>
+#include <QMediaPlayer>
+#include <QAudioOutput>
 #include "recursos.h"
 #include "goku.h"
 #include "taopaipaijefe.h"
@@ -63,6 +65,15 @@ void Nivel2::iniciarnivel() {
     QTimer* timerActualizacion = new QTimer(this);
     connect(timerActualizacion, &QTimer::timeout, this, &Nivel2::actualizar);
     timerActualizacion->start(100);
+    musicaNivel2 = new QMediaPlayer(this);
+    salidaAudio = new QAudioOutput(this);
+
+    musicaNivel2->setAudioOutput(salidaAudio);
+    salidaAudio->setVolume(0.3);  // volumen entre 0.0 y 1.0
+
+    musicaNivel2->setSource(QUrl("qrc:/Recursos/Sonidos/Nivel2.wav"));
+    musicaNivel2->play();
+
 }
 
 void Nivel2::actualizar() {
@@ -109,6 +120,9 @@ void Nivel2::actualizarBarrasVida() {
 
 
 void Nivel2::mostrarPantallaGameOver() {
+    if (musicaNivel2) {
+        musicaNivel2->stop();
+    }
     escena->clear();
     QPixmap fondoGameOver(Recursos::fondoGameOverGoku);
     if (fondoGameOver.isNull()) return;
@@ -131,6 +145,10 @@ void Nivel2::mostrarPantallaGameOver() {
 }
 
 void Nivel2::mostrarPantallaVictoria() {
+    if (musicaNivel2) {
+        musicaNivel2->stop();
+    }
+
     escena->clear();
     QPixmap fondoVictoria(Recursos::fondoWinGoku);
     if (fondoVictoria.isNull()) return;

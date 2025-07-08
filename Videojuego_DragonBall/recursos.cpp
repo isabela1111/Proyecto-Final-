@@ -36,7 +36,6 @@ const QString Recursos:: TaoAparicionDe = ":/Recursos/Sprites/TaoAparicionDe.PNG
 const QString Recursos::TaoCaidoH = ":/Recursos/Sprites/TaoCaidoHo.PNG";
 const QString Recursos::TaoGranada = ":/Recursos/Sprites/TaoGranada.PNG";
 
-
 //Sprites nivel 3
 const QString Recursos::gokuNubeSprite = ":/Recursos/Sprites/GokuNube1.PNG";
 const QString Recursos::avionEnemigo1Sprite = ":/Recursos/Sprites/avionEnemigo1.PNG";
@@ -47,5 +46,8 @@ const QString Recursos::misilSprite = ":/Recursos/Sprites/Misil.PNG";
 const QString Recursos::sonidoSalto = ":/Recursos/Sonidos/salto.wav";
 const QString Recursos::sonidoGolpe = ":/Recursos/Sonidos/golpe.wav";
 const QString Recursos::sonidoIntro = ":/Recursos/Sonidos/intro.wav";
+const QString Recursos::sonidoNivel2 = ":/Recursos/Sonidos/Nivel2.wav";
+const QString Recursos::sonidoGokuDanio = ":/Recursos/Sonidos/gokudanio.wav";
+const QString Recursos::sonidoTaoDanio = ":/Recursos/Sonidos/taodanio.wav";
 
 

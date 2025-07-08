@@ -58,7 +58,7 @@ void Nivel1::iniciarnivel() {
     escena->addItem(textoAltura);
 
     taoPaiPai = new TaoPaiPai(vista, this);
-    taoPaiPai->setPos(250, 500); // posición inicial
+    taoPaiPai->setPos(250, 500); // posicion inicial
     taoPaiPai->cayendo = false;
     taoPaiPai->setFocus();
     escena->addItem(taoPaiPai);

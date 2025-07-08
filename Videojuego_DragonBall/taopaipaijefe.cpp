@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QTimer>
 #include <QRandomGenerator>
+#include <QSoundEffect>
+
 
 TaoPaiPaiJefe::TaoPaiPaiJefe(QGraphicsView* vista, QObject* parent)
     : Personaje(vista, parent), objetivoJugador(nullptr), direccion(-1),
@@ -94,6 +96,7 @@ void TaoPaiPaiJefe::lanzarGranada() {
         // Ajuste de salida para que aparezca desde la mano de Tao
         qreal xSalida = x() + 30 * scale();
         qreal ySalida = y() + 15 * scale();
+
         Granada* granada = new Granada(xSalida, ySalida, objetivoJugador, false);
         granada->setZValue(1);
         scene()->addItem(granada);
@@ -101,16 +104,21 @@ void TaoPaiPaiJefe::lanzarGranada() {
     });
 }
 
-
 void TaoPaiPaiJefe::recibirDanio(int cantidad) {
     if (!estaVisible || estaCayendo) return;
     vida -= cantidad;
     qDebug() << nombre << "recibió" << cantidad << "de daño. Vida restante:" << vida;
+    // Reproduce sonido de daño
+    QSoundEffect* sonidoTaoDanio = new QSoundEffect(this);
+    sonidoTaoDanio->setSource(QUrl("qrc:/Recursos/Sonidos/taodanio.wav"));
+    sonidoTaoDanio->play();
+
     if (vida <= 0) {
         setVisible(false);
         estaVisible = false;
         return;
     }
+
     hojaMovimiento.load(Recursos::TaoCaidoH);
     spriteAncho = 60;
     spriteAlto = 31;
@@ -120,6 +128,7 @@ void TaoPaiPaiJefe::recibirDanio(int cantidad) {
         estaCayendo = false;
     });
 }
+
 
 void TaoPaiPaiJefe::setObjetivo(Personaje* jugador) {
     objetivoJugador = jugador;

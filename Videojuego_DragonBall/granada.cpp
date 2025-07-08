@@ -3,6 +3,7 @@
 #include <QGraphicsScene>
 #include <QDebug>
 #include "recursos.h"
+#include "personaje.h"
 
 Granada::Granada(qreal xInicial, qreal yInicial, QGraphicsItem* objetivoJugador, bool esDevuelta)
     : Obstaculo(nullptr), objetivo(objetivoJugador), devuelta(esDevuelta),
@@ -30,7 +31,6 @@ Granada::Granada(qreal xInicial, qreal yInicial, QGraphicsItem* objetivoJugador,
     timerMovimiento->start(50);
 }
 
-
 void Granada::mover() {
     if (explotando) {
         int explosionAncho = 32;
@@ -52,20 +52,23 @@ void Granada::mover() {
         setPixmap(hojaGranada.copy(frameActual * spriteAncho, 0, spriteAncho, spriteAlto));
         frameActual = (frameActual + 1) % 17;
     }
-    // Limite inferior
-    if (y() > 550) {
-        explotar();
-        return;
-    }
     // Colisión con el objetivo
     if (!yaColisiono && objetivo && collidesWithItem(objetivo)) {
         yaColisiono = true;
-        explotar();
         if (!devuelta) {
-            if (QObject* obj = dynamic_cast<QObject*>(objetivo)) {
-                QMetaObject::invokeMethod(obj, "recibirDanio", Q_ARG(int, 1));
+            Personaje* personajeObjetivo = dynamic_cast<Personaje*>(objetivo);
+            if (personajeObjetivo) {
+                personajeObjetivo->recibirDanio(1);
+                qDebug() << "La granada dañó al jugador.";
+            } else {
+                qDebug() << "El objetivo no es un Personaje válido.";
             }
         }
+        explotar();
+        return;
+    }
+    if (y() > 550) {
+        explotar();
     }
 }
 

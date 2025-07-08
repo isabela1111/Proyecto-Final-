@@ -7,6 +7,8 @@
 #include "taopaipaijefe.h"
 #include <QGraphicsRectItem>
 #include <QTimer>
+#include <QMediaPlayer>
+
 
 class Nivel2 : public Nivel {
     Q_OBJECT
@@ -32,6 +34,10 @@ private:
     bool terminado;
     //void reiniciarEscena();
     void actualizarBarrasVida();
+    QMediaPlayer* musicaNivel2;
+    QAudioOutput* salidaAudio;
+
+
 
 };
 
