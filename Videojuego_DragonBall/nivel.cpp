@@ -1,14 +1,15 @@
 #include "nivel.h"
 #include <QGraphicsView>
 
-Nivel::Nivel(QObject* parent)
-    : QObject(parent)
+Nivel::Nivel(QGraphicsView* vista_, QObject* parent)
+    : QObject(parent), vista(vista_)
 {
     escena = new QGraphicsScene();
-    vista = new QGraphicsView(escena);
-    vista->setFixedSize(800, 600);
-    vista->show();
+    if (vista) {
+        vista->setScene(escena);
+    }
 }
+
 
 
 void Nivel::iniciarnivel() {
@@ -24,5 +25,3 @@ void Nivel::terminar() {
     escena->clear();
 }
 
-void Nivel::mostrarCinematicaFinal() {
-}

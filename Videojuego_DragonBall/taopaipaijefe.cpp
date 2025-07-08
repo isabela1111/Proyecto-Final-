@@ -84,26 +84,19 @@ void TaoPaiPaiJefe::lanzarGranada() {
     hojaMovimiento.load(Recursos::TaoGranada);
     spriteAncho = 224 / 5;
     spriteAlto = 63;
-
-    // Animación de lanzamiento en 5 frames (100 ms cada uno)
     for (int i = 0; i < 5; ++i) {
         QTimer::singleShot(i * 100, this, [this, i]() {
             setPixmap(hojaMovimiento.copy(i * spriteAncho, 0, spriteAncho, spriteAlto));
         });
     }
-
-    // Lanzar la granada después del 3er frame (mejor sincronía visual)
     QTimer::singleShot(300, this, [this]() {
         if (!scene()) return;
-
         // Ajuste de salida para que aparezca desde la mano de Tao
-        qreal xSalida = x() + 30 * scale();  // puedes ajustar +30 si la mano está más lejos
-        qreal ySalida = y() + 15 * scale();  // +15 para salir justo desde arriba del brazo
-
+        qreal xSalida = x() + 30 * scale();
+        qreal ySalida = y() + 15 * scale();
         Granada* granada = new Granada(xSalida, ySalida, objetivoJugador, false);
         granada->setZValue(1);
         scene()->addItem(granada);
-
         qDebug() << "Tao lanza granada desde (" << xSalida << "," << ySalida << ")";
     });
 }

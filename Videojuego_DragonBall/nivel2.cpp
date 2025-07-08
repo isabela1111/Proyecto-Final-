@@ -8,7 +8,9 @@
 #include "goku.h"
 #include "taopaipaijefe.h"
 
-Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
+Nivel2::Nivel2(QGraphicsView* vista_, QObject* parent)
+    : Nivel(vista_, parent)
+{
     escena = nullptr;
     goku = nullptr;
     taoPaiPai = nullptr;
@@ -19,6 +21,7 @@ Nivel2::Nivel2(QObject* parent) : Nivel(parent) {
 
     fondo.load(Recursos::fondoNivel2);
 }
+
 
 void Nivel2::iniciarnivel() {
     escena = new QGraphicsScene();
@@ -31,7 +34,6 @@ void Nivel2::iniciarnivel() {
         goku = new Goku(vista);
         connect(goku, &Goku::danioRecibido, this, [this]() {
             qDebug() << "Goku recibió daño → se reinicia la escena";
-            //reiniciarEscena();
         });
     }
     if (!taoPaiPai) {
@@ -62,32 +64,6 @@ void Nivel2::iniciarnivel() {
     connect(timerActualizacion, &QTimer::timeout, this, &Nivel2::actualizar);
     timerActualizacion->start(100);
 }
-
-/*
-void Nivel2::reiniciarEscena() {
-    if (!escena) return;
-
-    escena->clear();
-
-    QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondo.scaled(800, 600));
-    escena->addItem(fondoItem);
-
-    // Reposicionar personajes existentes
-    goku->setPos(100, 400);
-    taoPaiPai->setPos(600, 400);
-    escena->addItem(goku);
-    escena->addItem(taoPaiPai);
-
-    // Volver a mostrar barras de vida
-    for (auto* barra : barrasVidaGoku)
-        escena->addItem(barra);
-    for (auto* barra : barrasVidaTao)
-        escena->addItem(barra);
-
-    goku->setFocus();
-}
-*/
-
 
 void Nivel2::actualizar() {
     if (!goku || !taoPaiPai) return;
@@ -130,6 +106,7 @@ void Nivel2::actualizarBarrasVida() {
         barrasVidaTao[i]->setVisible(i < taoPaiPai->getVida());
     }
 }
+
 
 void Nivel2::mostrarPantallaGameOver() {
     escena->clear();

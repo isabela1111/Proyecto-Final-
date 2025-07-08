@@ -2,7 +2,6 @@
 #define NIVEL1_H
 
 #include "nivel.h"
-
 #include "taopaipai.h"
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
@@ -35,9 +34,9 @@ private:
     void aplicarGravedad();
     void verificarCaida();
     void crearBarrasVida();
-    void actualizarBarraVida();
     void mostrarPantallaGameOver();
     void mostrarPantallaVictoria();
+    void ajustarDificultad();
 
     // Elementos de escena
     QGraphicsPixmapItem* fondoItem = nullptr;
@@ -53,13 +52,12 @@ private:
     int tiempoRestante;
     bool fisicaActiva = false;
 
-    // Temporizadores
     QTimer* temporizador;
     QTimer* timerCronometro;
     QTimer* timerPiedras;
+    int piedrasPorIntervalo;
 
     const int ALTURA_SECCION = 600;
 };
 
 #endif // NIVEL1_H
-

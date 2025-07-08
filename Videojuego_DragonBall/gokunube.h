@@ -1,7 +1,6 @@
 #ifndef GOKUNUBE_H
 #define GOKUNUBE_H
 
-
 #include "personaje.h"
 
 #include <QTimer>

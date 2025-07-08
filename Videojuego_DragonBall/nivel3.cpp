@@ -13,7 +13,7 @@
 #include <QCoreApplication>
 
 Nivel3::Nivel3(QGraphicsView* vista, QObject* parent)
-    : Nivel(parent), vista(vista), distanciaRecorrida(0), vidas(5)
+    : Nivel(vista, parent), vista(vista), distanciaRecorrida(0), vidas(5)
 {
     escena = new QGraphicsScene();
     escena->setSceneRect(0, 0, 8000, 600);
