@@ -69,9 +69,9 @@ void Nivel2::iniciarnivel() {
     salidaAudio = new QAudioOutput(this);
 
     musicaNivel2->setAudioOutput(salidaAudio);
-    salidaAudio->setVolume(0.3);  // volumen entre 0.0 y 1.0
+    salidaAudio->setVolume(0.2);  // volumen entre 0.0 y 1.0
 
-    musicaNivel2->setSource(QUrl("qrc:/Recursos/Sonidos/Nivel2.wav"));
+    musicaNivel2->setSource(QUrl(" Recursos::sonidoNivel2"));
     musicaNivel2->play();
 
 }
