@@ -1,7 +1,8 @@
 #include "personaje.h"
+#include "nivel1.h"
+
 #include <QDebug>
 #include <QKeyEvent>
-#include "nivel1.h"
 
 Personaje::Personaje(QGraphicsView* vista, QObject* parent)
     : QObject(parent), QGraphicsPixmapItem(), vista(vista)
@@ -22,19 +23,15 @@ void Personaje::recibirDanio(int cantidad) {
 }
 
 void Personaje::mover() {
-    // Se sobreescribe en el hijo
 }
 
 void Personaje::saltar() {
-    // Se sobreescribe en el hijo
 }
 
 void Personaje::atacar() {
-    // Se sobreescribe en el hijo
 }
 
 void Personaje::esquivar() {
-    // Se sobreescribe en el hijo
 }
 
 int Personaje::getVida() const {
@@ -70,4 +67,5 @@ void Personaje::keyPressEvent(QKeyEvent* event) {
         break;
     }
 }
+
 

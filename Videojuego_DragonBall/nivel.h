@@ -24,6 +24,7 @@ public:
     virtual void iniciarnivel();
     virtual void actualizar();
     virtual void terminar();
+    virtual void detenerMusica();
 
 protected:
     void mostrarPantallaFinal(const QPixmap& fondo, bool victoria);

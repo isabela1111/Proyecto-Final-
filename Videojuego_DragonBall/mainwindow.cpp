@@ -1,41 +1,50 @@
 #include "mainwindow.h"
-
 #include "ui_mainwindow.h"
+
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
 #include <QImage>
 #include <QFont>
+#include <stdexcept>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     this->showMaximized();
-
-    reproductorIntro = new QMediaPlayer(this);
-    salidaAudio = new QAudioOutput(this);
-    reproductorIntro->setAudioOutput(salidaAudio);
-    reproductorIntro->setSource(QUrl("qrc" + Recursos::sonidoIntro));
-    salidaAudio->setVolume(0.5);
-    reproductorIntro->play();
-
+    // Audio
+    try {
+        reproductorIntro = new QMediaPlayer(this);
+        salidaAudio = new QAudioOutput(this);
+        reproductorIntro->setAudioOutput(salidaAudio);
+        reproductorIntro->setSource(QUrl("qrc" + Recursos::sonidoIntro));
+        salidaAudio->setVolume(0.5);
+        reproductorIntro->play();
+    }
+    catch (const std::exception& e) {
+        qDebug() << "Error al cargar o reproducir la música de inicio:" << e.what();
+    }
+    // Escena
     escena = new QGraphicsScene(this);
+    if (!ui->graphicsView_)
+        throw std::runtime_error("Error: graphicsView_ no inicializado en la interfaz.");
     ui->graphicsView_->setScene(escena);
     ui->graphicsView_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView_->setFrameStyle(QFrame::NoFrame);
 
     QImage fondoOriginal(Recursos::fondoMenu);
+    if (fondoOriginal.isNull())
+        throw std::runtime_error("Error: no se pudo cargar el fondo del menú.");
     QImage fondoEscalado = fondoOriginal.scaled(
         ui->graphicsView_->width(),
         ui->graphicsView_->height(),
         Qt::IgnoreAspectRatio,
         Qt::SmoothTransformation
         );
-
     escena->setSceneRect(0, 0, ui->graphicsView_->width(), ui->graphicsView_->height());
     ui->graphicsView_->setBackgroundBrush(QBrush(fondoEscalado));
-    // Titulo y botones
+    // Titulo
     QString textoTitulo = "Dragon Ball";
     QFont fuenteTitulo("Impact", 80, QFont::Bold);
     titulo = escena->addText(textoTitulo);
@@ -45,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     QRectF rectTitulo = titulo->boundingRect();
     float xCentro = (escena->width() - rectTitulo.width()) / 2;
     titulo->setPos(xCentro, 18);
-
+    // Botones
     int botonAncho = 300;
     int botonAlto = 60;
     int espacio = 60;
@@ -80,16 +89,25 @@ void MainWindow::iniciarNivel1() {
         reproductorIntro->stop();
 
     QGraphicsView* vista = new QGraphicsView();
-    nivel1 = new Nivel1(vista, this);
-    nivel1->iniciarnivel();
-
-    vista->setScene(nivel1->escena);
+    vista->setAttribute(Qt::WA_DeleteOnClose); // <- Importante
     vista->setFixedSize(800, 600);
     vista->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     vista->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     vista->setFrameStyle(QFrame::NoFrame);
     vista->setFocus();
+
+    nivel1 = new Nivel1(vista, this);
+    nivel1->iniciarnivel();
+
+    vista->setScene(nivel1->escena);
     vista->show();
+
+    connect(vista, &QObject::destroyed, this, [this]() {
+        if (nivel1) {
+            nivel1->detenerMusica();
+            nivel1 = nullptr;
+        }
+    });
 }
 
 
@@ -98,16 +116,24 @@ void MainWindow::iniciarNivel2() {
         reproductorIntro->stop();
 
     QGraphicsView* vista = new QGraphicsView();
-    nivel2 = new Nivel2(vista, this);
-    nivel2->iniciarnivel();
-
-    vista->setScene(nivel2->escena);
+    vista->setAttribute(Qt::WA_DeleteOnClose);
     vista->setFixedSize(800, 600);
     vista->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     vista->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     vista->setFrameStyle(QFrame::NoFrame);
     vista->setFocus();
+
+    nivel2 = new Nivel2(vista, this);
+    nivel2->iniciarnivel();
+
+    vista->setScene(nivel2->escena);
     vista->show();
+    connect(vista, &QObject::destroyed, this, [this]() {
+        if (nivel2) {
+            nivel2->detenerMusica();
+            nivel2 = nullptr;
+        }
+    });
 }
 
 
@@ -116,10 +142,23 @@ void MainWindow::iniciarNivel3() {
         reproductorIntro->stop();
 
     QGraphicsView* vista = new QGraphicsView();
+    vista->setAttribute(Qt::WA_DeleteOnClose); // <- Importante
+    vista->setFixedSize(800, 600);
+    vista->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    vista->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    vista->setFrameStyle(QFrame::NoFrame);
+    vista->setFocus();
+
     nivel3 = new Nivel3(vista);
     nivel3->iniciarnivel();
 
     vista->setScene(nivel3->escena);
-    vista->setFixedSize(800, 600);
     vista->show();
+
+    connect(vista, &QObject::destroyed, this, [this]() {
+        if (nivel3) {
+            nivel3->detenerMusica();
+            nivel3 = nullptr;
+        }
+    });
 }

@@ -48,7 +48,8 @@ void TaoPaiPai::activarFisica(bool activo) {
     if (activo) {
         if (!timerFisica->isActive())
             timerFisica->start(30);
-    } else {
+    }
+    else {
         timerFisica->stop();
     }
 }
@@ -68,10 +69,8 @@ void TaoPaiPai::mover() {
     puedeSaltar = true;
 }
 
-
 void TaoPaiPai::saltar() {
     if (!puedeSaltar || !saltoDisponible) return;
-
     velocidadY = -12;
     hojaSprites.load(Recursos::TaoJumpSprite);
     frameActual = 0;
@@ -147,7 +146,6 @@ void TaoPaiPai::keyReleaseEvent(QKeyEvent* event) {
     Personaje::keyReleaseEvent(event);
 }
 
-
 void TaoPaiPai::reproducirSonidoGolpe() {
     if (efectoGolpe) efectoGolpe->play();
 }
@@ -157,4 +155,5 @@ void TaoPaiPai::reiniciarFisica() {
     cayendo = false;
     puedeSaltar = true;
 }
+
 

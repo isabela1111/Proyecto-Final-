@@ -38,6 +38,7 @@ private:
     QMediaPlayer* reproductorIntro;
     QAudioOutput* salidaAudio;
 
+    QGraphicsView* vistaNivel2 = nullptr;
 
 private slots:
     void iniciarNivel1();

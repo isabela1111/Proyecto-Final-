@@ -18,14 +18,16 @@ Granada::Granada(qreal xInicial, qreal yInicial, QGraphicsItem* objetivoJugador,
 
     if (!hojaGranada.isNull()) {
         setPixmap(hojaGranada.copy(0, 0, spriteAncho, spriteAlto));
-    } else {
+    }
+    else {
         qDebug() << "Error: hojaGranada está vacía.";
     }
     setPos(xInicial, yInicial);
-    // Movimiento parabólico
+
     velocidadX = devuelta ? 5.5 : -5.5;
     velocidadY = -8;
     gravedad = 0.4;
+
     timerMovimiento = new QTimer(this);
     connect(timerMovimiento, &QTimer::timeout, this, &Granada::mover);
     timerMovimiento->start(50);
@@ -45,15 +47,13 @@ void Granada::mover() {
         }
         return;
     }
-    // Movimiento parabólico
     velocidadY += gravedad;
     moveBy(velocidadX, velocidadY);
     if (!hojaGranada.isNull() && (frameActual * spriteAncho < hojaGranada.width())) {
         setPixmap(hojaGranada.copy(frameActual * spriteAncho, 0, spriteAncho, spriteAlto));
         frameActual = (frameActual + 1) % 17;
     }
-    // Colisión con el objetivo
-    if (!yaColisiono && objetivo && collidesWithItem(objetivo)) {
+    if (!yaColisiono && objetivo && scene() && objetivo->scene() == scene() && collidesWithItem(objetivo)) {
         yaColisiono = true;
         if (!devuelta) {
             Personaje* personajeObjetivo = dynamic_cast<Personaje*>(objetivo);
@@ -78,6 +78,7 @@ void Granada::explotar() {
     velocidadX = 0;
     velocidadY = 0;
     setPixmap(explosionSprite.copy(0, 0, 32, 45));
+
     QSoundEffect* sonidoExplosion = new QSoundEffect(this);
     sonidoExplosion->setSource(QUrl("qrc:/Recursos/Sonidos/explosion.wav"));
     sonidoExplosion->play();

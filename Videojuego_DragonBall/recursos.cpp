@@ -46,7 +46,9 @@ const QString Recursos::misilSprite = ":/Recursos/Sprites/Misil.PNG";
 const QString Recursos::sonidoSalto = ":/Recursos/Sonidos/salto.wav";
 const QString Recursos::sonidoGolpe = ":/Recursos/Sonidos/golpe.wav";
 const QString Recursos::sonidoIntro = ":/Recursos/Sonidos/intro.wav";
+const QString Recursos::sonidoNivel1 = ":/Recursos/Sonidos/Nivel1.wav";
 const QString Recursos::sonidoNivel2 = ":/Recursos/Sonidos/Nivel2.wav";
+const QString Recursos::sonidoNivel3 = ":/Recursos/Sonidos/Nivel3.wav";
 const QString Recursos::sonidoGokuDanio = ":/Recursos/Sonidos/gokudanio.wav";
 const QString Recursos::sonidoTaoDanio = ":/Recursos/Sonidos/taodanio.wav";
 

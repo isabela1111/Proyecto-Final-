@@ -1,11 +1,13 @@
 #include "nivel1.h"
 #include "recursos.h"
 #include "piedra.h"
+
 #include <QGraphicsPixmapItem>
 #include <QGraphicsProxyWidget>
 #include <QTimer>
 #include <QDebug>
 #include <QFont>
+#include <stdexcept>
 
 Nivel1::Nivel1(QGraphicsView* vista_, QObject* parent)
     : Nivel(vista_, parent), textoAltura(nullptr),metrosSubidos(0),vista(vista_),fisicaActiva(false),
@@ -21,6 +23,9 @@ Nivel1::Nivel1(QGraphicsView* vista_, QObject* parent)
     temporizador    = nullptr;
     timerCronometro = nullptr;
     timerPiedras    = nullptr;
+    musicaNivel1 = nullptr;
+    salidaAudio1 = nullptr;
+
 
     textoCronometro = new QGraphicsTextItem();
     textoCronometro->setDefaultTextColor(Qt::black);
@@ -39,37 +44,50 @@ Nivel1::Nivel1(QGraphicsView* vista_, QObject* parent)
 }
 
 void Nivel1::iniciarnivel() {
-    fondo.load(Recursos::fondoNivel1);
-    if (fondo.isNull()) {
-        qDebug() << "No se pudo cargar el fondo del nivel 1.";
-        return;
-    }
-    QPixmap fondoEscalado = fondo.scaled(800, ALTURA_SECCION);
-    for (int i = 0; i < 2; ++i) {
-        QGraphicsPixmapItem* fondoSeccion = new QGraphicsPixmapItem(fondoEscalado);
-        fondoSeccion->setZValue(0);
-        fondoSeccion->setPos(0, -i * ALTURA_SECCION);
-        escena->addItem(fondoSeccion);
-        fondosScroll.append(fondoSeccion);
-    }
-    crearBarrasVida();
-    textoCronometro->setPlainText("Tiempo: 02:00");
-    escena->addItem(textoCronometro);
-    escena->addItem(textoAltura);
+    try {
+        fondo.load(Recursos::fondoNivel1);
+        if (fondo.isNull()) {
+            throw std::runtime_error("No se pudo cargar el fondo del nivel 1.");
+        }
+        QPixmap fondoEscalado = fondo.scaled(800, ALTURA_SECCION);
+        for (int i = 0; i < 2; ++i) {
+            QGraphicsPixmapItem* fondoSeccion = new QGraphicsPixmapItem(fondoEscalado);
+            fondoSeccion->setZValue(0);
+            fondoSeccion->setPos(0, -i * ALTURA_SECCION);
+            escena->addItem(fondoSeccion);
+            fondosScroll.append(fondoSeccion);
+        }
+        crearBarrasVida();
+        textoCronometro->setPlainText("Tiempo: 02:00");
+        escena->addItem(textoCronometro);
+        escena->addItem(textoAltura);
 
-    taoPaiPai = new TaoPaiPai(vista, this);
-    taoPaiPai->setPos(250, 500); // posicion inicial
-    taoPaiPai->cayendo = false;
-    taoPaiPai->setFocus();
-    escena->addItem(taoPaiPai);
+        taoPaiPai = new TaoPaiPai(vista, this);
+        taoPaiPai->setPos(250, 500);
+        taoPaiPai->cayendo = false;
+        taoPaiPai->setFocus();
+        escena->addItem(taoPaiPai);
 
-    textoInicio = new QGraphicsTextItem("Presiona la letra E para empezar");
-    textoInicio->setDefaultTextColor(Qt::black);
-    textoInicio->setFont(QFont("Consolas", 20, QFont::Bold));
-    textoInicio->setPos(200, 250);
-    textoInicio->setZValue(3);
-    escena->addItem(textoInicio);
+        textoInicio = new QGraphicsTextItem("Presiona la letra E para empezar");
+        textoInicio->setDefaultTextColor(Qt::black);
+        textoInicio->setFont(QFont("Consolas", 20, QFont::Bold));
+        textoInicio->setPos(200, 250);
+        textoInicio->setZValue(3);
+        escena->addItem(textoInicio);
+        // SONIDO
+        musicaNivel1 = new QMediaPlayer(this);
+        salidaAudio1 = new QAudioOutput(this);
+        musicaNivel1->setAudioOutput(salidaAudio1);
+        salidaAudio1->setVolume(0.25);
+        musicaNivel1->setSource(QUrl("qrc" + Recursos::sonidoNivel1));
+        musicaNivel1->play();
+
+    }
+    catch (const std::exception& e) {
+        qDebug() << "Error al iniciar el nivel 1:" << e.what();
+    }
 }
+
 
 void Nivel1::comenzarJuego() {
     if (juegoIniciado || gameOverShown) return;
@@ -131,8 +149,6 @@ void Nivel1::ajustarDificultad() {
     }
 }
 
-
-
 void Nivel1::verificarCaida() {
     if (!fisicaActiva) return;
     if (juegoIniciado && taoPaiPai->y() < 100 && !gameOverShown) {
@@ -170,7 +186,6 @@ void Nivel1::verificarCaida() {
         });
     }
 }
-
 
 void Nivel1::verificarColisiones() {
     QList<QGraphicsItem*> colisiones = taoPaiPai->collidingItems();
@@ -224,59 +239,67 @@ void Nivel1::actualizarCronometro() {
 }
 
 void Nivel1::mostrarPantallaGameOver() {
-    gameOverShown = true;
-    if (temporizador) temporizador->stop();
-    if (timerCronometro) timerCronometro->stop();
-    if (timerPiedras) timerPiedras->stop();
-    escena->clear();
-    QPixmap fondoGameOver(Recursos::fondoGameOverTao);
-    if (fondoGameOver.isNull()) {
-        qDebug() << "No se pudo cargar fondoGameOverTao.";
-        return;
-    }
-    QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoGameOver.scaled(800, 600));
-    escena->addItem(fondoItem);
-    // Boton volver al menu
-    QPushButton* botonMenu = new QPushButton("Volver al menú");
-    botonMenu->setFixedSize(200, 50);
-    botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
-    QGraphicsProxyWidget* proxy = escena->addWidget(botonMenu);
-    proxy->setZValue(101);
-    QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
-    proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
+    try {
+        gameOverShown = true;
+        if (temporizador) temporizador->stop();
+        if (timerCronometro) timerCronometro->stop();
+        if (timerPiedras) timerPiedras->stop();
+        escena->clear();
 
-    connect(botonMenu, &QPushButton::clicked, [this]() {
-        emit volverAlMenu();
-        vista->close();
-    });
+        QPixmap fondoGameOver(Recursos::fondoGameOverTao);
+        if (fondoGameOver.isNull()) {
+            throw std::runtime_error("No se pudo cargar fondoGameOverTao.");
+        }
+        QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoGameOver.scaled(800, 600));
+        escena->addItem(fondoItem);
+
+        QPushButton* botonMenu = new QPushButton("Volver al menú");
+        botonMenu->setFixedSize(200, 50);
+        botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
+        QGraphicsProxyWidget* proxy = escena->addWidget(botonMenu);
+        proxy->setZValue(101);
+
+        QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
+        proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
+        connect(botonMenu, &QPushButton::clicked, [this]() {
+            emit volverAlMenu();
+            vista->close();
+        });
+    }
+    catch (const std::exception& e) {
+        qDebug() << "Error al mostrar pantalla Game Over:" << e.what();
+    }
 }
 
 void Nivel1::mostrarPantallaVictoria() {
-    gameOverShown = true;
-    escena->clear();
-    QPixmap fondoWin(Recursos::fondoWinTao);
-    if (fondoWin.isNull()) {
-        qDebug() << "No se pudo cargar fondoWinTao.";
-        return;
+    try {
+        gameOverShown = true;
+        escena->clear();
+
+        QPixmap fondoWin(Recursos::fondoWinTao);
+        if (fondoWin.isNull()) {
+            throw std::runtime_error("No se pudo cargar fondoWinTao.");
+        }
+        QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoWin.scaled(800, 600));
+        escena->addItem(fondoItem);
+
+        QPushButton* botonMenu = new QPushButton("Volver al menú");
+        botonMenu->setFixedSize(200, 50);
+        botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
+        QGraphicsProxyWidget* proxy = escena->addWidget(botonMenu);
+        proxy->setZValue(101);
+
+        QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
+        proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
+        connect(botonMenu, &QPushButton::clicked, [this]() {
+            emit volverAlMenu();
+            vista->close();
+        });
     }
-    QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondoWin.scaled(800, 600));
-    escena->addItem(fondoItem);
-
-    QPushButton* botonMenu = new QPushButton("Volver al menú");
-    botonMenu->setFixedSize(200, 50);
-    botonMenu->setStyleSheet("background-color: white; color: black; font-weight: bold; border-radius: 10px;");
-    QGraphicsProxyWidget* proxy = escena->addWidget(botonMenu);
-    proxy->setZValue(101);
-
-    QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
-    proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
-
-    connect(botonMenu, &QPushButton::clicked, [this]() {
-        emit volverAlMenu();
-        vista->close();
-    });
+    catch (const std::exception& e) {
+        qDebug() << "Error al mostrar pantalla de victoria:" << e.what();
+    }
 }
-
 
 void Nivel1::crearBarrasVida() {
     for (QGraphicsRectItem* barra : barrasVida) {
@@ -313,6 +336,13 @@ void Nivel1::quitarVida() {
                 mostrarPantallaGameOver();
             });
         }
+    }
+}
+
+void Nivel1::detenerMusica() {
+    if (musicaNivel1 && musicaNivel1->isPlaying()) {
+        musicaNivel1->stop();
+        qDebug() << "Música del nivel 1 detenida.";
     }
 }
 

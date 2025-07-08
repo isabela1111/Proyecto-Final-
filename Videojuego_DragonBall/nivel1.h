@@ -6,6 +6,9 @@
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QGraphicsTextItem>
+#include <QMediaPlayer>
+#include <QAudioOutput>
+
 #include <QTimer>
 
 class Nivel1 : public Nivel {
@@ -24,6 +27,7 @@ public:
     QGraphicsTextItem* textoInicio = nullptr;
     QGraphicsTextItem* textoAltura;
     int metrosSubidos;
+    void detenerMusica() override;
 
 private slots:
     void actualizarCronometro();
@@ -56,6 +60,10 @@ private:
     QTimer* timerCronometro;
     QTimer* timerPiedras;
     int piedrasPorIntervalo;
+
+    QMediaPlayer* musicaNivel1;
+    QAudioOutput* salidaAudio1;
+
 
     const int ALTURA_SECCION = 600;
 };

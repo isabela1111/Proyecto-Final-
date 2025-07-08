@@ -20,11 +20,13 @@ public:
     void mostrarPantallaGameOver();
     void mostrarPantallaVictoria();
     void crearBarrasVida();
+    void detenerMusica() override;
 
 private:
     Goku* goku;
     TaoPaiPaiJefe* taoPaiPai;
     QTimer* timerAtaques;
+    QTimer* timerActualizacion;
 
     QList<QGraphicsRectItem*> barrasVidaGoku;
     QList<QGraphicsRectItem*> barrasVidaTao;
@@ -32,11 +34,13 @@ private:
     bool victoriaMostrada;
     bool derrotaMostrada;
     bool terminado;
-    //void reiniciarEscena();
     void actualizarBarrasVida();
-    QMediaPlayer* musicaNivel2;
-    QAudioOutput* salidaAudio;
+    void volverAlMenu();
+    void detenerSonidosExtras();
 
+
+    QMediaPlayer* musicaNivel2 = nullptr;
+    QAudioOutput* salidaAudio = nullptr;
 
 
 };

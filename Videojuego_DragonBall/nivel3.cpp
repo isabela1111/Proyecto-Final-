@@ -11,9 +11,12 @@
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
 #include <QCoreApplication>
+#include <QFile>
+#include <stdexcept>
+
 
 Nivel3::Nivel3(QGraphicsView* vista, QObject* parent)
-    : Nivel(vista, parent), vista(vista), distanciaRecorrida(0), vidas(5)
+    : Nivel(vista, parent), vista(vista), distanciaRecorrida(0), vidas(5), musicaNivel3(nullptr), salidaAudio(nullptr)
 {
     escena = new QGraphicsScene();
     escena->setSceneRect(0, 0, 8000, 600);
@@ -30,41 +33,54 @@ Nivel3::~Nivel3() {
 }
 
 void Nivel3::iniciarnivel() {
-    fondoItem = new QGraphicsPixmapItem(fondo.scaled(8000, 600));
-    escena->addItem(fondoItem);
-    goku = new GokuNube(vista);
-    escena->addItem(goku);
-    goku->setPos(100, 300);
-    goku->setFocus();
+    try {
+        fondoItem = new QGraphicsPixmapItem(fondo.scaled(8000, 600));
+        escena->addItem(fondoItem);
+        goku = new GokuNube(vista);
+        escena->addItem(goku);
+        goku->setPos(100, 300);
+        goku->setFocus();
 
-    textoDistancia = new QGraphicsTextItem();
-    textoDistancia->setDefaultTextColor(Qt::white);
-    textoDistancia->setFont(QFont("Arial", 16));
-    textoDistancia->setPos(10, 10);
-    escena->addItem(textoDistancia);
-    actualizarDistancia();
-    for (int i = 0; i < vidas; ++i) {
-        QGraphicsRectItem* barra = new QGraphicsRectItem(0, 0, 25, 10);
-        barra->setBrush(Qt::green);
-        barra->setPos(10 + i * 30, 40);
-        escena->addItem(barra);
-        barrasVida.append(barra);
+        textoDistancia = new QGraphicsTextItem();
+        textoDistancia->setDefaultTextColor(Qt::white);
+        textoDistancia->setFont(QFont("Arial", 16));
+        textoDistancia->setPos(10, 10);
+        escena->addItem(textoDistancia);
+        actualizarDistancia();
+        for (int i = 0; i < vidas; ++i) {
+            QGraphicsRectItem* barra = new QGraphicsRectItem(0, 0, 25, 10);
+            barra->setBrush(Qt::green);
+            barra->setPos(10 + i * 30, 40);
+            escena->addItem(barra);
+            barrasVida.append(barra);
+        }
+        timerObstaculos = new QTimer(this);
+        connect(timerObstaculos, &QTimer::timeout, this, &Nivel3::generarObstaculo);
+        connect(goku, &GokuNube::gokuRecibeDanio, this, &Nivel3::perderVida);
+        timerObstaculos->start(800);
+
+        timerDistancia = new QTimer(this);
+        connect(timerDistancia, &QTimer::timeout, this, &Nivel3::actualizarDistancia);
+        timerDistancia->start(1000);
+
+        timerScroll = new QTimer(this);
+        connect(timerScroll, &QTimer::timeout, this, &Nivel3::actualizarScroll);
+        timerScroll->start(30);
+        if (!QFile::exists(Recursos::sonidoNivel3)) {
+            throw std::runtime_error("Archivo de sonido de Nivel 3 no encontrado.");
+        }
+        musicaNivel3 = new QMediaPlayer(this);
+        salidaAudio = new QAudioOutput(this);
+        musicaNivel3->setAudioOutput(salidaAudio);
+        salidaAudio->setVolume(0.2);
+        musicaNivel3->setSource(QUrl("qrc" + Recursos::sonidoNivel3));
+        musicaNivel3->play();
+        vista->setScene(escena);
+        vista->centerOn(goku);
     }
-    timerObstaculos = new QTimer(this);
-    connect(timerObstaculos, &QTimer::timeout, this, &Nivel3::generarObstaculo);
-    connect(goku, &GokuNube::gokuRecibeDanio, this, &Nivel3::perderVida);
-
-    timerObstaculos->start(800);
-
-    timerDistancia = new QTimer(this);
-    connect(timerDistancia, &QTimer::timeout, this, &Nivel3::actualizarDistancia);
-    timerDistancia->start(1000);
-
-    timerScroll = new QTimer(this);
-    connect(timerScroll, &QTimer::timeout, this, &Nivel3::actualizarScroll);
-    timerScroll->start(30);
-    vista->setScene(escena);
-    vista->centerOn(goku);
+    catch (const std::exception& e) {
+        qDebug() << "Error al iniciar Nivel 3:" << e.what();
+    }
 }
 
 void Nivel3::generarObstaculo() {
@@ -142,40 +158,46 @@ void Nivel3::perderVida() {
 }
 
 void Nivel3::mostrarGameOver() {
-    if (terminado) return;
-    terminado = true;
-    if (timerObstaculos) { timerObstaculos->stop(); delete timerObstaculos; timerObstaculos = nullptr; }
-    if (timerDistancia) { timerDistancia->stop(); delete timerDistancia; timerDistancia = nullptr; }
-    if (timerScroll)    { timerScroll->stop(); delete timerScroll; timerScroll = nullptr; }
-    for (QGraphicsItem* item : escena->items()) {
-        AvionEnemigo* avion = dynamic_cast<AvionEnemigo*>(item);
-        if (avion) {
-            avion->scene()->removeItem(avion);
-            avion->deleteLater();
+    try {
+        if (terminado) return;
+        terminado = true;
+        if (timerObstaculos) { timerObstaculos->stop(); delete timerObstaculos; timerObstaculos = nullptr; }
+        if (timerDistancia) { timerDistancia->stop(); delete timerDistancia; timerDistancia = nullptr; }
+        if (timerScroll)    { timerScroll->stop(); delete timerScroll; timerScroll = nullptr; }
+        if (musicaNivel3) musicaNivel3->stop();
+        for (QGraphicsItem* item : escena->items()) {
+            AvionEnemigo* avion = dynamic_cast<AvionEnemigo*>(item);
+            if (avion) {
+                avion->scene()->removeItem(avion);
+                avion->deleteLater();
+            }
         }
+        if (goku) {
+            goku->blockSignals(true);
+            goku->setEnabled(false);
+            goku->setVisible(false);
+            escena->removeItem(goku);
+            goku->deleteLater();
+            goku = nullptr;
+        }
+        QPixmap gameOverPixmap(Recursos::fondoGameOverGoku);
+        if (gameOverPixmap.isNull()) throw std::runtime_error("Fondo Game Over no pudo cargarse.");
+        QGraphicsPixmapItem* gameOver = escena->addPixmap(gameOverPixmap.scaled(800, 600));
+        gameOver->setZValue(100);
+        QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
+        gameOver->setPos(centroVista.x() - 400, centroVista.y() - 300);
+
+        QPushButton* botonMenu = new QPushButton("Volver al menú");
+        botonMenu->setFixedSize(200, 50);
+        botonMenu->setStyleSheet("background-color: white; color: black; border-radius: 10px;");
+        QGraphicsProxyWidget* proxyBoton = escena->addWidget(botonMenu);
+        proxyBoton->setZValue(101);
+        proxyBoton->setPos(centroVista.x() - 100, centroVista.y() + 150);
+        connect(botonMenu, &QPushButton::clicked, [this]() { this->vista->close(); });
     }
-    if (goku) {
-        goku->blockSignals(true);
-        goku->setEnabled(false);
-        goku->setVisible(false);
-        escena->removeItem(goku);
-        goku->deleteLater();
-        goku = nullptr;
+    catch (const std::exception& e) {
+        qDebug() << "Error al mostrar Game Over:" << e.what();
     }
-    QPixmap gameOverPixmap(Recursos::fondoGameOverGoku);
-    QGraphicsPixmapItem* gameOver = escena->addPixmap(gameOverPixmap.scaled(800, 600));
-    gameOver->setZValue(100);
-    QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
-    gameOver->setPos(centroVista.x() - 400, centroVista.y() - 300);
-    // Boton para volver al menu
-    QPushButton* botonMenu = new QPushButton("Volver al menú");
-    botonMenu->setFixedSize(200, 50);
-    botonMenu->setStyleSheet("background-color: white; color: black; border-radius: 10px;");
-    QGraphicsProxyWidget* proxyBoton = escena->addWidget(botonMenu);
-    proxyBoton->setZValue(101);
-    proxyBoton->setPos(centroVista.x() - 100, centroVista.y() + 150);
-    connect(botonMenu, &QPushButton::clicked, [this]() {
-        this->vista->close(); });
 }
 
 void Nivel3::actualizarScroll() {
@@ -185,5 +207,12 @@ void Nivel3::actualizarScroll() {
     textoDistancia->setPos(vistaCentro.x() + 10, vistaCentro.y() + 10);
     for (int i = 0; i < barrasVida.size(); ++i) {
         barrasVida[i]->setPos(vistaCentro.x() + 10 + i * 30, vistaCentro.y() + 40);
+    }
+}
+
+void Nivel3::detenerMusica() {
+    if (musicaNivel3 && musicaNivel3->isPlaying()) {
+        musicaNivel3->stop();
+        qDebug() << "Musica nivel 3 detenida.";
     }
 }

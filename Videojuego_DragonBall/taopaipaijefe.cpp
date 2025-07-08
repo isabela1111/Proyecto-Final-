@@ -7,7 +7,6 @@
 #include <QRandomGenerator>
 #include <QSoundEffect>
 
-
 TaoPaiPaiJefe::TaoPaiPaiJefe(QGraphicsView* vista, QObject* parent)
     : Personaje(vista, parent), objetivoJugador(nullptr), direccion(-1),
     frameMovimiento(0), frameAtaque(0), estaCayendo(false), estaVisible(false)
@@ -20,7 +19,7 @@ TaoPaiPaiJefe::TaoPaiPaiJefe(QGraphicsView* vista, QObject* parent)
     setPixmap(QPixmap(Recursos::TaoAparicionDe));
     setVisible(false);
     setFlag(QGraphicsItem::ItemIsFocusable, false);
-    // Aparición
+    // Aparicion
     posicionesAparicion << QPointF(100, 380) << QPointF(400, 380) << QPointF(650, 380);
     // Temporizadores
     aparicionTimer = new QTimer(this);
@@ -112,13 +111,11 @@ void TaoPaiPaiJefe::recibirDanio(int cantidad) {
     QSoundEffect* sonidoTaoDanio = new QSoundEffect(this);
     sonidoTaoDanio->setSource(QUrl("qrc:/Recursos/Sonidos/taodanio.wav"));
     sonidoTaoDanio->play();
-
     if (vida <= 0) {
         setVisible(false);
         estaVisible = false;
         return;
     }
-
     hojaMovimiento.load(Recursos::TaoCaidoH);
     spriteAncho = 60;
     spriteAlto = 31;
