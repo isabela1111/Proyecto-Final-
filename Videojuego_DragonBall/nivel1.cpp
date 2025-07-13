@@ -7,6 +7,8 @@
 #include <QTimer>
 #include <QDebug>
 #include <QFont>
+#include <QRandomGenerator>
+#include <QDateTime>
 #include <stdexcept>
 
 Nivel1::Nivel1(QGraphicsView* vista_, QObject* parent)
@@ -20,12 +22,17 @@ Nivel1::Nivel1(QGraphicsView* vista_, QObject* parent)
     vidasTotales    = 5;
     vidasRestantes  = vidasTotales;
 
+    contadorScroll = 0;
+    scrollsDesdeUltimaPiedra = 0;
+    scrollsDesdeUltimaPiedra = 0;
+    tiempoUltimaPiedra = QDateTime::currentMSecsSinceEpoch();
+
+
     temporizador    = nullptr;
     timerCronometro = nullptr;
     timerPiedras    = nullptr;
     musicaNivel1 = nullptr;
     salidaAudio1 = nullptr;
-
 
     textoCronometro = new QGraphicsTextItem();
     textoCronometro->setDefaultTextColor(Qt::black);
@@ -81,13 +88,11 @@ void Nivel1::iniciarnivel() {
         salidaAudio1->setVolume(0.25);
         musicaNivel1->setSource(QUrl("qrc" + Recursos::sonidoNivel1));
         musicaNivel1->play();
-
     }
     catch (const std::exception& e) {
         qDebug() << "Error al iniciar el nivel 1:" << e.what();
     }
 }
-
 
 void Nivel1::comenzarJuego() {
     if (juegoIniciado || gameOverShown) return;
@@ -96,17 +101,11 @@ void Nivel1::comenzarJuego() {
     taoPaiPai->setPos(250, 500);
     taoPaiPai->cayendo = false;
     taoPaiPai->reiniciarFisica();
+    // Cronometro
     timerCronometro = new QTimer(this);
     connect(timerCronometro, &QTimer::timeout, this, &Nivel1::actualizarCronometro);
     timerCronometro->start(1000);
-
-    timerPiedras = new QTimer(this);
-    connect(timerPiedras, &QTimer::timeout, this, [=]() {
-        Piedra* piedra = new Piedra(this);
-        piedra->setPos(305, 0);
-        escena->addItem(piedra);
-    });
-    timerPiedras->start(3000);
+    // Fisica del juego
     QTimer::singleShot(1500, this, &Nivel1::iniciarFisica);
 }
 
@@ -126,12 +125,10 @@ void Nivel1::iniciarFisica() {
 
 void Nivel1::ajustarDificultad() {
     int etapas = metrosSubidos / 150;
-
     if (metrosSubidos <= 1000) {
         piedrasPorIntervalo = 1 + etapas;
     }
     else {
-        // Después de 1000 m, se limita la dificultad
         piedrasPorIntervalo = 5;
     }
     int intervalo = 3000 - etapas * 300;
@@ -151,17 +148,19 @@ void Nivel1::ajustarDificultad() {
 
 void Nivel1::verificarCaida() {
     if (!fisicaActiva) return;
+    // Verificar subida para mover scroll y crear piedra cada ciertos scrolls
     if (juegoIniciado && taoPaiPai->y() < 100 && !gameOverShown) {
         metrosSubidos += 10;
         textoAltura->setPlainText(QString("Altura: %1 m").arg(metrosSubidos));
-        ajustarDificultad();  // Incrementa dificultad segun metros
-
+        ajustarDificultad();
         for (auto item : escena->items()) {
             if (item != textoAltura && item != textoCronometro && item != textoInicio &&
                 !barrasVida.contains(dynamic_cast<QGraphicsRectItem*>(item))) {
                 item->moveBy(0, 10);
             }
         }
+        contadorScroll++;
+        scrollsDesdeUltimaPiedra++;
         for (auto fondo : fondosScroll) {
             if (fondo->y() > 600) {
                 fondo->moveBy(0, -2 * ALTURA_SECCION);
@@ -175,6 +174,23 @@ void Nivel1::verificarCaida() {
             return;
         }
     }
+    // Verificar generación de piedra por scroll o tiempo
+    qint64 tiempoActual = QDateTime::currentMSecsSinceEpoch();
+    bool tiempoCumplido = (tiempoActual - tiempoUltimaPiedra >= 5000);
+    bool scrollCumplido = (scrollsDesdeUltimaPiedra >= 25);
+    if (tiempoCumplido || scrollCumplido) {
+        scrollsDesdeUltimaPiedra = 0;
+        tiempoUltimaPiedra = tiempoActual;
+        if (vista) {
+            QPointF esquinaSuperior = vista->mapToScene(0, 0);
+            qreal yInicio = esquinaSuperior.y() - 45;
+            int xFijo = 305;
+            Piedra* piedra = new Piedra(this);
+            piedra->setPos(xFijo, yInicio);
+            escena->addItem(piedra);
+        }
+    }
+    // Verifica si Tao se cayo abajo del escenario
     if (juegoIniciado && !taoPaiPai->cayendo &&
         taoPaiPai->y() + taoPaiPai->boundingRect().height() > escena->height()) {
         taoPaiPai->cayendo = true;
@@ -182,6 +198,7 @@ void Nivel1::verificarCaida() {
         taoPaiPai->mostrarCaida();
         QTimer::singleShot(500, this, [this]() {
             taoPaiPai->setPos(250, 500);
+            taoPaiPai->setFocus();
             taoPaiPai->cayendo = false;
         });
     }
@@ -245,7 +262,6 @@ void Nivel1::mostrarPantallaGameOver() {
         if (timerCronometro) timerCronometro->stop();
         if (timerPiedras) timerPiedras->stop();
         escena->clear();
-
         QPixmap fondoGameOver(Recursos::fondoGameOverTao);
         if (fondoGameOver.isNull()) {
             throw std::runtime_error("No se pudo cargar fondoGameOverTao.");
@@ -275,7 +291,6 @@ void Nivel1::mostrarPantallaVictoria() {
     try {
         gameOverShown = true;
         escena->clear();
-
         QPixmap fondoWin(Recursos::fondoWinTao);
         if (fondoWin.isNull()) {
             throw std::runtime_error("No se pudo cargar fondoWinTao.");
@@ -342,7 +357,7 @@ void Nivel1::quitarVida() {
 void Nivel1::detenerMusica() {
     if (musicaNivel1 && musicaNivel1->isPlaying()) {
         musicaNivel1->stop();
-        qDebug() << "Música del nivel 1 detenida.";
+        qDebug() << "Musica del nivel 1 detenida.";
     }
 }
 

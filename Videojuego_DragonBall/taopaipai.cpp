@@ -4,7 +4,7 @@
 #include <QDebug>
 
 TaoPaiPai::TaoPaiPai(QGraphicsView* vista, QObject* parent)
-    : Personaje(vista, parent),velocidadY(0),gravedad(0.7),enElAire(false), estaMoviendose(false),
+    : Personaje(vista, parent),velocidadY(0),gravedad(0.7), estaMoviendose(false),
     frameActual(0), filaMaxima(5)
 {
     nombre = "Tao Pai Pai";
@@ -80,7 +80,6 @@ void TaoPaiPai::saltar() {
     puedeSaltar = false;
 }
 
-
 void TaoPaiPai::animarCaminar() {
     if (frameActual >= filaMaxima) {
         frameActual = 0;
@@ -117,7 +116,6 @@ void TaoPaiPai::actualizarFisica() {
     }
     setX(250);
 }
-
 
 void TaoPaiPai::mostrarCaida() {
     hojaSprites.load(Recursos::TaoCaidoSprite);

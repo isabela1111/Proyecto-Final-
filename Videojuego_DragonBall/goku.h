@@ -22,6 +22,11 @@ public:
     void moverDerecha();
     void mostrarCaida();
     void actualizarSalto();
+    enum Direccion { IZQUIERDA, DERECHA };
+
+private:
+    Direccion direccionActual;
+
 
 
 signals:

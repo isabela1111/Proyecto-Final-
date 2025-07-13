@@ -42,18 +42,18 @@ void TaoPaiPaiJefe::aparecer() {
     if (!scene()) return;
     estaVisible = true;
     int idx = QRandomGenerator::global()->bounded(posicionesAparicion.size());
-    setPos(posicionesAparicion[idx]);
-    bool haciaIzquierda = objetivoJugador && x() > objetivoJugador->x();
+    QPointF nuevaPos = posicionesAparicion[idx];
+    bool haciaIzquierda = objetivoJugador && nuevaPos.x() > objetivoJugador->x();
     hojaMovimiento.load(haciaIzquierda ? Recursos::TaoAparicionIz : Recursos::TaoAparicionDe);
-
     spriteAncho = 40;
     spriteAlto = 57;
+    setPos(nuevaPos);
+    setVisible(true);
     for (int i = 0; i < 4; ++i) {
         QTimer::singleShot(i * 100, this, [this, i]() {
             setPixmap(hojaMovimiento.copy(i * spriteAncho, 0, spriteAncho, spriteAlto));
         });
     }
-    setVisible(true);
     desaparicionTimer->start(1500); // Se borra tras 1.5 segundos
 }
 
@@ -125,7 +125,6 @@ void TaoPaiPaiJefe::recibirDanio(int cantidad) {
         estaCayendo = false;
     });
 }
-
 
 void TaoPaiPaiJefe::setObjetivo(Personaje* jugador) {
     objetivoJugador = jugador;

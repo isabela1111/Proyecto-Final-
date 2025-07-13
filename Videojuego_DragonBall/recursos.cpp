@@ -11,6 +11,7 @@ const QString Recursos::fondoGameOverTao = ":/Recursos/fondos/fondoGameOverTao.j
 const QString Recursos::fondoGameOverGoku = ":/Recursos/fondos/fondoGameOverGoku.jpg";
 const QString Recursos::fondoWinGoku = ":/Recursos/fondos/fondoWinGoku.jpg";
 const QString Recursos::fondoWinTao = ":/Recursos/fondos/fondoWinTao.jpg";
+const QString Recursos::Reglas = ":/Recursos/fondos/Reglas.jpg";
 
 
 //Sprites nivel 1
@@ -25,6 +26,8 @@ const QString Recursos::gokuRunA = ":/Recursos/Sprites/gokuRunA.PNG";
 const QString Recursos::gokuRunD = ":/Recursos/Sprites/gokuRunD.PNG";
 const QString Recursos::gokuAtaque1 = ":/Recursos/Sprites/gokuAtaque1.PNG";
 const QString Recursos::gokuAtaque2 = ":/Recursos/Sprites/gokuAtaque2.PNG";
+const QString Recursos::gokuAtaque3 = ":/Recursos/Sprites/gokuAtaque3.PNG";
+const QString Recursos::gokuAtaque4 = ":/Recursos/Sprites/gokuAtaque4.PNG";
 const QString Recursos::gokuJump = ":/Recursos/Sprites/gokuJump.PNG";
 const QString Recursos::gokuCaido = ":/Recursos/Sprites/gokuCaido.PNG";
 const QString Recursos::granadaSprite = ":/Recursos/Sprites/Granadaa.PNG";
@@ -51,5 +54,7 @@ const QString Recursos::sonidoNivel2 = ":/Recursos/Sonidos/Nivel2.wav";
 const QString Recursos::sonidoNivel3 = ":/Recursos/Sonidos/Nivel3.wav";
 const QString Recursos::sonidoGokuDanio = ":/Recursos/Sonidos/gokudanio.wav";
 const QString Recursos::sonidoTaoDanio = ":/Recursos/Sonidos/taodanio.wav";
+
+
 
 

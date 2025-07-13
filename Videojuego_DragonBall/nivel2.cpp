@@ -3,14 +3,15 @@
 #include "goku.h"
 #include "taopaipaijefe.h"
 
-#include <QGraphicsPixmapItem>
-#include <QDebug>
-#include <QGraphicsProxyWidget>
+#include <QGraphicsPixmapItem>    // Para fondo y barras de vida
+#include <QDebug>                 // Para mensajes de depuración
+#include <QGraphicsProxyWidget>   // Para botones dentro de la escena
 #include <QPushButton>
-#include <QTimer>
-#include <QMediaPlayer>
-#include <QAudioOutput>
-#include <stdexcept>
+#include <QTimer>                 // Para control de tiempo de juego y ataques
+#include <QMediaPlayer>           // Para musica y sonidos
+#include <QAudioOutput>           // Para salida de audio
+#include <stdexcept>              // Para manejo de errores con throw
+
 
 Nivel2::Nivel2(QGraphicsView* vista_, QObject* parent)
     : Nivel(vista_, parent)
@@ -32,30 +33,24 @@ void Nivel2::iniciarnivel() {
             escena = new QGraphicsScene();
         else
             escena->clear();
-
         escena->setSceneRect(0, 0, 800, 600);
         vista->setScene(escena);
-
         if (!fondo.load(Recursos::fondoNivel2))
             throw std::runtime_error("No se pudo cargar el fondo del nivel 2.");
-
         QGraphicsPixmapItem* fondoItem = new QGraphicsPixmapItem(fondo.scaled(800, 600));
         escena->addItem(fondoItem);
-
         if (goku) {
             escena->removeItem(goku);
             goku->disconnect();
             delete goku;
             goku = nullptr;
         }
-
         if (taoPaiPai) {
             escena->removeItem(taoPaiPai);
             taoPaiPai->disconnect();
             delete taoPaiPai;
             taoPaiPai = nullptr;
         }
-
         goku = new Goku(vista);
         connect(goku, &Goku::danioRecibido, this, []() {
             qDebug() << "Goku recibió daño";
@@ -81,13 +76,11 @@ void Nivel2::iniciarnivel() {
         barrasVidaTao.clear();
 
         crearBarrasVida();
-
         if (!timerActualizacion) {
             timerActualizacion = new QTimer(this);
             connect(timerActualizacion, &QTimer::timeout, this, &Nivel2::actualizar);
         }
         timerActualizacion->start(100);
-
         if (!timerAtaques) {
             timerAtaques = new QTimer(this);
             connect(timerAtaques, &QTimer::timeout, taoPaiPai, &TaoPaiPaiJefe::lanzarGranada);
@@ -98,7 +91,6 @@ void Nivel2::iniciarnivel() {
         salidaAudio = new QAudioOutput(this);
         musicaNivel2->setAudioOutput(salidaAudio);
         salidaAudio->setVolume(0.2);
-
         if (Recursos::sonidoNivel2.isEmpty())
             throw std::runtime_error("Ruta de sonido del nivel 2 vacía.");
 
@@ -112,15 +104,12 @@ void Nivel2::iniciarnivel() {
 
 void Nivel2::actualizar() {
     if (!goku || !taoPaiPai) return;
-
     actualizarBarrasVida();
-
     if (goku->getVida() <= 0 && !derrotaMostrada) {
         mostrarPantallaGameOver();
         derrotaMostrada = true;
         terminado = true;
     }
-
     if (taoPaiPai->getVida() <= 0 && !victoriaMostrada) {
         mostrarPantallaVictoria();
         victoriaMostrada = true;
@@ -210,7 +199,6 @@ void Nivel2::mostrarPantallaVictoria() {
             QPointF centroVista = vista->mapToScene(vista->viewport()->rect().center());
             proxy->setPos(centroVista.x() - 100, centroVista.y() + 150);
         });
-
         connect(botonMenu, &QPushButton::clicked, this, &Nivel2::volverAlMenu);
     }
     catch (const std::exception& e) {

@@ -43,5 +43,8 @@
         <file>Recursos/Sonidos/gokudanio.wav</file>
         <file>Recursos/Sonidos/taodanio.wav</file>
         <file>Recursos/Sonidos/Nivel1.wav</file>
+        <file>Recursos/Sprites/gokuAtaque3.PNG</file>
+        <file>Recursos/Sprites/gokuAtaque4.PNG</file>
+        <file>Recursos/fondos/Reglas.jpg</file>
     </qresource>
 </RCC>

@@ -63,7 +63,6 @@ void Misil::mover() {
     }
 }
 
-
 void Misil::limpiarYEliminar() {
     if (timerMovimiento) {
         timerMovimiento->stop();

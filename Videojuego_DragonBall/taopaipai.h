@@ -37,12 +37,10 @@ private:
     float posY;
     float velocidadY;
     float gravedad;
-    bool enElAire;
     bool estaMoviendose;
     bool saltando;
     bool puedeSaltar;
     bool saltoDisponible;
-
 
     // Sprite y animaciones
     QPixmap hojaSprites;

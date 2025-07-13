@@ -17,8 +17,10 @@ private:
     int anchoFrame;
     int altoFrame;
     QTimer* timerAnimacion;
+    QTimer* timerMovimiento;
 
     void actualizarFrame();
+    void mover();
 };
 
 #endif // PIEDRA_H

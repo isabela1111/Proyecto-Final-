@@ -9,12 +9,8 @@
 
 AvionEnemigo::AvionEnemigo(GokuNube* goku, QGraphicsItem* parent)
     : Obstaculo(nullptr, parent),
-    frameActual(0), totalFrames(5),
-    spriteAncho(228 / 5), spriteAlto(43),
-    goku(goku), misilesDisparados(0),
-    velocidadX(2.0), tiempo(0.0), omega(0.15),
-    amplitud(40), baseY(0.0),
-    haTerminadoDisparos(false), maxMisiles(3)
+    frameActual(0), totalFrames(5),spriteAncho(228 / 5), spriteAlto(43),goku(goku), misilesDisparados(0),
+    velocidadX(2.0), tiempo(0.0), omega(0.15),amplitud(40), baseY(0.0), haTerminadoDisparos(false), maxMisiles(3)
 {
     if (rand() % 2 == 0)
         hojaSprites.load(Recursos::avionEnemigo1Sprite);

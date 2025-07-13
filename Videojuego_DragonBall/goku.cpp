@@ -7,7 +7,8 @@
 
 Goku::Goku(QGraphicsView* vista, QObject* parent)
     : Personaje(vista, parent),
-    frameActual(0),tiempoSalto(0),enElAire(false),modoAtaque(false),ataqueAlterno(false)
+    frameActual(0), tiempoSalto(0), enElAire(false),
+    modoAtaque(false), ataqueAlterno(false)
 {
     nombre = "Goku";
     vida = 5;
@@ -16,6 +17,7 @@ Goku::Goku(QGraphicsView* vista, QObject* parent)
     setPos(100, 400);
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
+    direccionActual = DERECHA;
 
     temporizadorAtaque = new QTimer(this);
     temporizadorAtaque->setSingleShot(true);
@@ -34,8 +36,8 @@ Goku::Goku(QGraphicsView* vista, QObject* parent)
     setPixmap(hojaSprites.copy(0, 0, spriteAncho, spriteAlto));
 }
 
-
 void Goku::moverIzquierda() {
+    direccionActual = IZQUIERDA;
     hojaSprites.load(Recursos::gokuRunA);
     spriteAncho = 127;
     spriteAlto = 146;
@@ -46,6 +48,7 @@ void Goku::moverIzquierda() {
 }
 
 void Goku::moverDerecha() {
+    direccionActual = DERECHA;
     hojaSprites.load(Recursos::gokuRunD);
     spriteAncho = 127;
     spriteAlto = 146;
@@ -66,7 +69,7 @@ void Goku::saltar() {
         tiempoSalto = 15;
 
         QSoundEffect* sonidoSalto = new QSoundEffect(this);
-        sonidoSalto->setSource(QUrl("qrc:/Recursos/Sonidos/salto.wav"));
+        sonidoSalto->setSource(QUrl("qrc" + Recursos::sonidoSalto));
         sonidoSalto->play();
     }
 }
@@ -93,20 +96,35 @@ void Goku::atacar() {
     modoAtaque = true;
 
     QSoundEffect* sonidoGolpe = new QSoundEffect(this);
-    sonidoGolpe->setSource(QUrl("qrc:/Recursos/Sonidos/golpe.wav"));
+    sonidoGolpe->setSource(QUrl("qrc" + Recursos::sonidoGolpe));
     sonidoGolpe->play();
 
-    if (!ataqueAlterno) {
-        hojaSprites.load(Recursos::gokuAtaque1);
-        spriteAncho = 127;
-        spriteAlto = 114;
-        frameActual = (frameActual + 1) % 6;
-    } else {
-        hojaSprites.load(Recursos::gokuAtaque2);
-        spriteAncho = 131;
-        spriteAlto = 136;
-        frameActual = (frameActual + 1) % 4;
+    if (direccionActual == DERECHA) {
+        if (!ataqueAlterno) {
+            hojaSprites.load(Recursos::gokuAtaque1);
+            spriteAncho = 127;
+            spriteAlto = 114;
+            frameActual = (frameActual + 1) % 6;
+        } else {
+            hojaSprites.load(Recursos::gokuAtaque2);
+            spriteAncho = 131;
+            spriteAlto = 136;
+            frameActual = (frameActual + 1) % 4;
+        }
+    } else { // IZQUIERDA
+        if (!ataqueAlterno) {
+            hojaSprites.load(Recursos::gokuAtaque3);
+            spriteAncho = 127;
+            spriteAlto = 114;
+            frameActual = (frameActual + 1) % 6;
+        } else {
+            hojaSprites.load(Recursos::gokuAtaque4);
+            spriteAncho = 131;
+            spriteAlto = 136;
+            frameActual = (frameActual + 1) % 4;
+        }
     }
+
     setPixmap(hojaSprites.copy(frameActual * spriteAncho, 0, spriteAncho, spriteAlto));
     ataqueAlterno = !ataqueAlterno;
 
@@ -118,6 +136,7 @@ void Goku::atacar() {
             }
         }
     }
+
     temporizadorAtaque->start(300);
 }
 
@@ -128,14 +147,14 @@ void Goku::mostrarCaida() {
     setPixmap(hojaSprites.copy(0, 0, spriteAncho, spriteAlto));
 }
 
-
 void Goku::recibirDanio(int cantidad) {
     vida -= cantidad;
     qDebug() << nombre << "recibió" << cantidad << "de daño. Vida restante:" << vida;
 
     QSoundEffect* sonidoGokuDanio = new QSoundEffect(this);
-    sonidoGokuDanio->setSource(QUrl("qrc:/Recursos/Sonidos/gokudanio.wav"));
+    sonidoGokuDanio->setSource(QUrl("qrc" + Recursos::sonidoGokuDanio));
     sonidoGokuDanio->play();
+
     mostrarCaida();
     emit danioRecibido();
 }

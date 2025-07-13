@@ -3,7 +3,6 @@
 #include <QGraphicsView>
 #include <stdexcept>
 
-
 Nivel::Nivel(QGraphicsView* vista_, QObject* parent)
     : QObject(parent), vista(vista_)
 {
@@ -17,7 +16,6 @@ Nivel::Nivel(QGraphicsView* vista_, QObject* parent)
     vista->setScene(escena);
 }
 
-
 void Nivel::iniciarnivel() {
 }
 
@@ -30,7 +28,6 @@ void Nivel::terminar() {
     terminado = true;
     escena->clear();
 }
-
 
 void Nivel::detenerMusica() {
 }

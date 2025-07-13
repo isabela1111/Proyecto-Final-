@@ -10,20 +10,26 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
-#include <QCoreApplication>
 #include <QFile>
 #include <stdexcept>
 
-
 Nivel3::Nivel3(QGraphicsView* vista, QObject* parent)
-    : Nivel(vista, parent), vista(vista), distanciaRecorrida(0), vidas(5), musicaNivel3(nullptr), salidaAudio(nullptr)
+    : Nivel(vista, parent),
+    vista(vista),distanciaRecorrida(0),vidas(5),musicaNivel3(nullptr),salidaAudio(nullptr),cooldownMisil(nullptr),
+    puedeLanzarMisil(true),misilDisponible(false),avisoMisil(nullptr),temporizadorMisilEspecial(new QTimer(this))
 {
     escena = new QGraphicsScene();
     escena->setSceneRect(0, 0, 8000, 600);
     fondo.load(Recursos::fondoNivel3);
     terminado = false;
-    efectoGolpe.setSource(QUrl::fromLocalFile(Recursos::sonidoGolpe));
+     efectoGolpe.setSource(QUrl::fromLocalFile(Recursos::sonidoGolpe));
     efectoGolpe.setVolume(1.0);
+    temporizadorMisilEspecial->setSingleShot(true);
+    connect(temporizadorMisilEspecial, &QTimer::timeout, [=]() {
+        misilDisponible = true;
+        if (avisoMisil)
+            avisoMisil->setPlainText("¡Misil listo! Presiona ESPACIO");
+    });
 }
 
 Nivel3::~Nivel3() {
@@ -40,7 +46,20 @@ void Nivel3::iniciarnivel() {
         escena->addItem(goku);
         goku->setPos(100, 300);
         goku->setFocus();
-
+        connect(goku, &GokuNube::lanzarSuperMisil, this, [this]() {
+            if (puedeLanzarMisil && !terminado) {
+                puedeLanzarMisil = false;
+                lanzarSuperMisilGoku();
+                if (!cooldownMisil) {
+                    cooldownMisil = new QTimer(this);
+                    cooldownMisil->setSingleShot(true);
+                    connect(cooldownMisil, &QTimer::timeout, [this]() {
+                        puedeLanzarMisil = true;
+                    });
+                }
+                cooldownMisil->start(5000); // 5 segundos
+            }
+        });
         textoDistancia = new QGraphicsTextItem();
         textoDistancia->setDefaultTextColor(Qt::white);
         textoDistancia->setFont(QFont("Arial", 16));
@@ -75,6 +94,13 @@ void Nivel3::iniciarnivel() {
         salidaAudio->setVolume(0.2);
         musicaNivel3->setSource(QUrl("qrc" + Recursos::sonidoNivel3));
         musicaNivel3->play();
+        avisoMisil = new QGraphicsTextItem("Cargando misil...");
+        avisoMisil->setDefaultTextColor(Qt::yellow);
+        avisoMisil->setFont(QFont("Arial", 14, QFont::Bold));
+        avisoMisil->setZValue(10);
+        avisoMisil->setPos(10, 70);  // Posición inicial
+        escena->addItem(avisoMisil);
+        temporizadorMisilEspecial->start(5000);
         vista->setScene(escena);
         vista->centerOn(goku);
     }
@@ -85,24 +111,32 @@ void Nivel3::iniciarnivel() {
 
 void Nivel3::generarObstaculo() {
     if (!goku || terminado) return;
+
     int altoEscena = static_cast<int>(escena->sceneRect().height());
     int altoAvion = 43;
     int margen = 20;
-    int y = QRandomGenerator::global()->bounded(margen, altoEscena - altoAvion - margen);
-    AvionEnemigo* avion = new AvionEnemigo(goku);
-    float dificultad = distanciaRecorrida / 150.0;
-    if (dificultad > 2.0) dificultad = 2.0;
-    avion->setVelocidad(2.5 + dificultad * 1.2);
-    avion->setMaxMisiles(1 + dificultad * 2);
-    escena->addItem(avion);
-    avion->setPos(goku->x() + 800, y);
-    // Conexiones
-    connect(avion, &AvionEnemigo::colisionaConGoku, this, &Nivel3::perderVida);
-    connect(avion, &AvionEnemigo::disparoMisil, escena, &QGraphicsScene::addItem);
+    int cantidadAviones = 1 + distanciaRecorrida / 200;
+    if (cantidadAviones > 5) cantidadAviones = 5;
+    for (int i = 0; i < cantidadAviones; ++i) {
+        int y = QRandomGenerator::global()->bounded(margen, altoEscena - altoAvion - margen);
+        AvionEnemigo* avion = new AvionEnemigo(goku);
+
+        float dificultad = distanciaRecorrida / 150.0;
+        if (dificultad > 2.0) dificultad = 2.0;
+
+        avion->setVelocidad(2.5 + dificultad * 1.2);
+        avion->setMaxMisiles(1 + dificultad * 2);
+        escena->addItem(avion);
+        avion->setPos(goku->x() + 800 + i * 100, y);
+
+        connect(avion, &AvionEnemigo::colisionaConGoku, this, &Nivel3::perderVida);
+        connect(avion, &AvionEnemigo::disparoMisil, escena, &QGraphicsScene::addItem);
+    }
     int nuevaFrecuencia = 1500 - (distanciaRecorrida / 10);
     if (nuevaFrecuencia < 500) nuevaFrecuencia = 500;
     timerObstaculos->start(nuevaFrecuencia);
 }
+
 
 void Nivel3::actualizarDistancia() {
     if (terminado || !goku) return;
@@ -202,17 +236,61 @@ void Nivel3::mostrarGameOver() {
 
 void Nivel3::actualizarScroll() {
     if (terminado || !goku) return;
+
     vista->centerOn(goku);
     QPointF vistaCentro = vista->mapToScene(vista->viewport()->rect().topLeft());
+
     textoDistancia->setPos(vistaCentro.x() + 10, vistaCentro.y() + 10);
+
     for (int i = 0; i < barrasVida.size(); ++i) {
         barrasVida[i]->setPos(vistaCentro.x() + 10 + i * 30, vistaCentro.y() + 40);
     }
+
+    if (avisoMisil) {
+        avisoMisil->setPos(vistaCentro.x() + 10, vistaCentro.y() + 70);
+    }
 }
+
 
 void Nivel3::detenerMusica() {
     if (musicaNivel3 && musicaNivel3->isPlaying()) {
         musicaNivel3->stop();
         qDebug() << "Musica nivel 3 detenida.";
     }
+}
+
+void Nivel3::lanzarSuperMisilGoku() {
+    QGraphicsPixmapItem* misil = new QGraphicsPixmapItem(QPixmap(Recursos::misilSprite).scaled(40, 20));
+    misil->setZValue(3);
+    misil->setPos(goku->x() + goku->boundingRect().width(), goku->y() + 10);
+    escena->addItem(misil);
+
+    QTimer* moverTimer = new QTimer(this);
+    connect(moverTimer, &QTimer::timeout, [=]() {
+        misil->setX(misil->x() + 10);
+        if (misil->x() > escena->sceneRect().right()) {
+            escena->removeItem(misil);
+            delete misil;
+            moverTimer->stop();
+            moverTimer->deleteLater();
+        } else {
+            QList<QGraphicsItem*> colisiones = misil->collidingItems();
+            for (QGraphicsItem* item : colisiones) {
+                AvionEnemigo* avion = dynamic_cast<AvionEnemigo*>(item);
+                if (avion) {
+                    escena->removeItem(avion);
+                    avion->deleteLater();
+                }
+            }
+        }
+    });
+    moverTimer->start(30);
+    avisoMisil = new QGraphicsTextItem("Cargando misil...");
+    avisoMisil->setDefaultTextColor(Qt::yellow);
+    avisoMisil->setFont(QFont("Arial", 14, QFont::Bold));
+    avisoMisil->setZValue(10);
+    avisoMisil->setPos(10, 70);
+    escena->addItem(avisoMisil);
+    temporizadorMisilEspecial->start(5000);
+
 }

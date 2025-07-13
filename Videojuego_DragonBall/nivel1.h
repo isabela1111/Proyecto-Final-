@@ -41,6 +41,7 @@ private:
     void mostrarPantallaGameOver();
     void mostrarPantallaVictoria();
     void ajustarDificultad();
+    void generarPiedra();
 
     // Elementos de escena
     QGraphicsPixmapItem* fondoItem = nullptr;
@@ -55,11 +56,17 @@ private:
     int vidasRestantes;
     int tiempoRestante;
     bool fisicaActiva = false;
+    int contadorScroll;
+    int scrollsDesdeUltimaPiedra = 0;
+    qint64 tiempoUltimaPiedra;
+
+
 
     QTimer* temporizador;
     QTimer* timerCronometro;
     QTimer* timerPiedras;
     int piedrasPorIntervalo;
+
 
     QMediaPlayer* musicaNivel1;
     QAudioOutput* salidaAudio1;

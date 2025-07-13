@@ -30,20 +30,23 @@ private:
     QPushButton* botonNivel1;
     QPushButton* botonNivel2;
     QPushButton* botonNivel3;
-
     Nivel1* nivel1;
     Nivel2* nivel2;
     Nivel3* nivel3;
 
     QMediaPlayer* reproductorIntro;
     QAudioOutput* salidaAudio;
-
+    QPushButton* botonSalir;
+    QPushButton* botonReglas;
     QGraphicsView* vistaNivel2 = nullptr;
 
 private slots:
     void iniciarNivel1();
     void iniciarNivel2();
     void iniciarNivel3();
+    void cerrarAplicacion();
+    void mostrarReglas();
+
 };
 
 #endif // MAINWINDOW_H

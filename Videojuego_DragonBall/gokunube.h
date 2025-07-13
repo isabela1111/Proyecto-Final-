@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsView>
+#include <QElapsedTimer>
 
 class GokuNube : public Personaje {
     Q_OBJECT
@@ -21,7 +22,7 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 signals:
     void gokuRecibeDanio();
-
+    void lanzarSuperMisil();
 
 private slots:
     void cambiarSprite();

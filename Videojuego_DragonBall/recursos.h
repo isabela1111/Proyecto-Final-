@@ -16,12 +16,15 @@ public:
     static const QString fondoGameOverGoku;
     static const QString fondoWinTao;
     static const QString fondoWinGoku;
+    static const QString Reglas;
 
     // Sprites
     static const QString gokuRunA;
     static const QString gokuRunD;
     static const QString gokuAtaque1;
     static const QString gokuAtaque2;
+    static const QString gokuAtaque3;
+    static const QString gokuAtaque4;
     static const QString gokuJump;
     static const QString gokuCaido;
 

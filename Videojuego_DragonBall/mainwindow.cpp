@@ -5,12 +5,17 @@
 #include <QPushButton>
 #include <QImage>
 #include <QFont>
+#include <QDialog>
+#include <QLabel>
+#include <QVBoxLayout>
 #include <stdexcept>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    connect(ui->botonSalir, &QPushButton::clicked, this, &MainWindow::cerrarAplicacion);
+    connect(ui->Reglas, &QPushButton::clicked, this, &MainWindow::mostrarReglas);
     this->showMaximized();
     // Audio
     try {
@@ -89,7 +94,7 @@ void MainWindow::iniciarNivel1() {
         reproductorIntro->stop();
 
     QGraphicsView* vista = new QGraphicsView();
-    vista->setAttribute(Qt::WA_DeleteOnClose); // <- Importante
+    vista->setAttribute(Qt::WA_DeleteOnClose);
     vista->setFixedSize(800, 600);
     vista->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     vista->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -109,7 +114,6 @@ void MainWindow::iniciarNivel1() {
         }
     });
 }
-
 
 void MainWindow::iniciarNivel2() {
     if (reproductorIntro && reproductorIntro->isPlaying())
@@ -140,9 +144,8 @@ void MainWindow::iniciarNivel2() {
 void MainWindow::iniciarNivel3() {
     if (reproductorIntro && reproductorIntro->isPlaying())
         reproductorIntro->stop();
-
     QGraphicsView* vista = new QGraphicsView();
-    vista->setAttribute(Qt::WA_DeleteOnClose); // <- Importante
+    vista->setAttribute(Qt::WA_DeleteOnClose);
     vista->setFixedSize(800, 600);
     vista->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     vista->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -161,4 +164,28 @@ void MainWindow::iniciarNivel3() {
             nivel3 = nullptr;
         }
     });
+}
+
+void MainWindow::cerrarAplicacion() {
+    QCoreApplication::quit();
+}
+
+void MainWindow::mostrarReglas() {
+    QDialog* ventanaReglas = new QDialog(this);
+    ventanaReglas->setWindowTitle("Reglas del Juego");
+    ventanaReglas->setFixedSize(700, 500);
+
+    QLabel* imagen = new QLabel(ventanaReglas);
+    imagen->setPixmap(QPixmap(Recursos::Reglas).scaled(680, 480, Qt::KeepAspectRatio));
+    imagen->setAlignment(Qt::AlignCenter);
+
+    QVBoxLayout* layout = new QVBoxLayout(ventanaReglas);
+    layout->addWidget(imagen);
+
+    ventanaReglas->setLayout(layout);
+    ventanaReglas->exec();
+    if (ui->graphicsView_) {
+        ui->graphicsView_->setFocusPolicy(Qt::StrongFocus);
+        ui->graphicsView_->setFocus();
+    }
 }

@@ -35,7 +35,14 @@ private:
     QTimer* timerObstaculos;
     QTimer* timerDistancia;
     QTimer* timerScroll;
+    QTimer* temporizadorMisilEspecial;
+    bool misilDisponible;
+    QGraphicsTextItem* avisoMisil;
 
+    QTimer* cooldownMisil = nullptr;
+    bool puedeLanzarMisil = true;
+
+    void lanzarSuperMisilGoku();
     void generarObstaculo();
     void actualizarDistancia();
     void perderVida();

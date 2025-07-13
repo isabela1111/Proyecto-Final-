@@ -30,6 +30,9 @@ void GokuNube::keyPressEvent(QKeyEvent* event) {
             setY(y() + velocidad);
         }
     }
+    else if (event->key() == Qt::Key_Space) {
+        emit lanzarSuperMisil();
+    }
 }
 
 void GokuNube::cambiarSprite() {
