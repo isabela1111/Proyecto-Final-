@@ -1,8 +1,8 @@
 #ifndef NIVEL1_H
 #define NIVEL1_H
-
 #include "nivel.h"
 #include "taopaipai.h"
+
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QGraphicsTextItem>
